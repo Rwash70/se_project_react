@@ -12,17 +12,3 @@
   list-style-type: none;
   gap: 21px;
 }
-
-.footer {
-  display: flex;
-}
-
-.footer__text {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-top: 171px;
-  font-family: Cabinet Grotesk;
-  font-size: 16px;
-  font-weight: 500;
-}
