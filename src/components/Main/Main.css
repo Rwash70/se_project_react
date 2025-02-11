@@ -1,3 +1,9 @@
+.cards__text {
+  font-family: Cabinet Grotesk;
+  font-size: 20px;
+  font-weight: 700;
+}
+
 .cards__list {
   display: flex;
   flex-wrap: wrap;
@@ -16,4 +22,7 @@
   display: flex;
   justify-content: space-between;
   margin-top: 171px;
+  font-family: Cabinet Grotesk;
+  font-size: 16px;
+  font-weight: 500;
 }
