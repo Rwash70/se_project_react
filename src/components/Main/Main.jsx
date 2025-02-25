@@ -1,11 +1,20 @@
 import "./Main.css";
 import WeatherCard from "../WeatherCard/WeatherCard";
 import ItemCard from "../ItemCard/ItemCard";
-import { defaultClothingItems } from "../../utils/constants";
+import { useContext } from "react";
+import CurrentTemperatureUnitContext from "../../contexts/CurrentTemperatureUnitContext";
 import Footer from "../footer/footer";
+import { deleteItems } from "../../utils/api";
 
-function Main({ weatherData, handleCardClick }) {
-  console.log("weatherData:", weatherData);
+// The Main component includes WeatherCard and ItemCard components.
+const Main = ({
+  weatherData,
+  handleCardClick,
+  handleDeleteItems,
+  clothingItems,
+}) => {
+  const { currentTemperatureUnit } = useContext(CurrentTemperatureUnitContext);
+
   return (
     <main>
       <WeatherCard weatherData={weatherData} />
@@ -14,7 +23,7 @@ function Main({ weatherData, handleCardClick }) {
           Today is {weatherData.temp.F} &deg; F / You may want to wear:
         </p>
         <ul className="cards__list">
-          {defaultClothingItems
+          {clothingItems
             .filter((item) => {
               return item.weather === weatherData.type;
             })
@@ -24,6 +33,7 @@ function Main({ weatherData, handleCardClick }) {
                   key={item._id}
                   item={item}
                   onCardClick={handleCardClick}
+                  onDeleteItem={handleDeleteItems}
                 />
               );
             })}
@@ -32,6 +42,6 @@ function Main({ weatherData, handleCardClick }) {
       <Footer />
     </main>
   );
-}
+};
 
 export default Main;

@@ -1,0 +1,36 @@
+.clothes-section {
+  margin-top: 59px;
+}
+
+.clothes-section__label {
+  margin-bottom: -25px;
+  margin-left: 48px;
+  font-style: Cabinet GroTesk;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.clothes-section__btn {
+  margin-left: 156px;
+  margin-top: -3px;
+  padding: 5px 10px;
+  border: none;
+  background: none;
+  font-style: Cabinet GroTesk;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.clothes-section__btn:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.clothes-section__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-radius: 10px;
+}
