@@ -64,7 +64,7 @@ function App() {
     try {
       await deleteItems(id);
       setClothingItems((prevItems) =>
-        prevItems.filter((item) => item._id !== id)
+        prevItems.filter((item) => item._id !== card._id)
       );
       closeActiveModal();
     } catch (error) {

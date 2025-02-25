@@ -1,0 +1,59 @@
+.modal__content {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.delete-modal__title {
+  font-size: 20px;
+  font-weight: bold;
+  font-family: Cabinet Grotesk;
+  margin-bottom: -12px;
+  align-items: center;
+  margin-left: 52px;
+}
+
+.delete-modal__text {
+  align-items: center;
+  margin-left: 126px;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: Cabinet Grotesk;
+}
+
+.delete-modal-delete__button {
+  display: flex;
+  margin-left: 132px;
+  margin-top: 34px;
+  background: none;
+  border: none;
+  color: red;
+  font-size: 20px;
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.3sease-in-out, transform 0.2sease-in-out;
+}
+
+.delete-modal-delete__button:hover {
+  opacity: 0.7;
+  transform: scale(1.05);
+}
+
+.delete-modal-cancel__button {
+  margin-left: 163px;
+  margin-top: 36px;
+  border: none;
+  background: none;
+  font-size: 20px;
+  font-family: Cabinet Grotesk;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.3sease-in-out, transform 0.2sease-in-out;
+}
+
+.delete-modal-cancel__button:hover {
+  opacity: 0.7;
+  transform: scale(1.05);
+}
