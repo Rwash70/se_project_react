@@ -11,6 +11,7 @@ function ClothesSection({
   handleAddClick,
   handleDeleteClick,
 }) {
+  console.log("clothingItems in ClothesSection:", clothingItems);
   return (
     <div className="clothes-section">
       <div>
@@ -20,20 +21,18 @@ function ClothesSection({
         </button>
       </div>
       <ul className="clothes-section__items">
-        {clothingItems
-          .filter((item) => {
-            return item.weather === weatherData.type;
-          })
-          .map((item) => {
-            return (
-              <ItemCard
-                key={item._id}
-                item={item}
-                onDeleteItem={() => handleDeleteClick(item._id)}
-                onCardClick={handleCardClick}
-              />
-            );
-          })}
+        {clothingItems.length > 0 ? (
+          clothingItems.map((item) => (
+            <ItemCard
+              key={item._id}
+              item={item}
+              onDeleteItem={() => handleDeleteClick(item._id)}
+              onCardClick={handleCardClick}
+            />
+          ))
+        ) : (
+          <p>No items found.</p>
+        )}
       </ul>
     </div>
   );

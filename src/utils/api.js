@@ -1,14 +1,29 @@
 const baseUrl = "http://localhost:3001";
 
+function checkResponse(response) {
+  if (!response.ok) {
+    return response.json().then((err) => {
+      throw new Error(err.message || `Error: ${response.status}`);
+    });
+  }
+  return response.json(); // Return parsed JSON if the response is OK
+}
+
 function getItems() {
   return fetch(`${baseUrl}/items`, {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((res) => {
-    console.log("Response received:", res);
-    return res.ok ? res.json() : Promise.reject(`Error: ${res.status}`);
-  });
+  })
+    .then(checkResponse)
+    .then((data) => {
+      console.log("Items received:", data);
+      return data;
+    })
+    .catch((error) => {
+      console.error("Error fetching items:", error);
+      throw error;
+    });
 }
 
 function addItems({ name, weather, imageUrl }) {
@@ -19,27 +34,27 @@ function addItems({ name, weather, imageUrl }) {
     },
     body: JSON.stringify({ name, weather, imageUrl }),
   })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      } else {
-        throw new Error(` Error: ${res.status}`);
-      }
+    .then(checkResponse) // Use checkResponse for consistent handling
+    .then((data) => {
+      console.log("Item added:", data);
+      return data;
     })
-    .catch(console.error);
+    .catch((error) => {
+      console.error("Error adding item:", error);
+      throw error;
+      ole.error;
+    });
 }
 
 function deleteItems(id) {
   return fetch(`${baseUrl}/items/${id}`, {
     method: "DELETE",
   })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
-      }
-      return res.json(); // Ensure the API confirms deletion
+    .then(checkResponse) // Use checkResponse for consistent handling
+    .then(() => {
+      console.log(`Item with id ${id} deleted.`);
+      return id;
     })
-    .then(() => id)
     .catch((error) => {
       console.error("Delete request failed:", error);
       throw error;

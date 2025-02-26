@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import "./ModalWithForm.css";
 
 const ModalWithForm = ({
@@ -8,7 +9,15 @@ const ModalWithForm = ({
   activeModal,
   onClose,
   onSubmit,
+  resetForm, // Pass resetForm as a prop to reset form on modal open
 }) => {
+  // Reset the form when modal is opened
+  useEffect(() => {
+    if (isOpen && resetForm) {
+      resetForm(); // Call reset function passed as prop
+    }
+  }, [isOpen, resetForm]);
+
   return (
     <div className={`modal ${isOpen && "modal_opened"}`}>
       <div className="modal__content">

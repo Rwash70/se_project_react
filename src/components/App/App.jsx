@@ -49,14 +49,15 @@ function App() {
   };
 
   const handleAddItemModalSubmit = ({ name, imageUrl, weather }) => {
-    // update clothingItems aray
+    // Call the API to add the new item
     addItems({ name, imageUrl, weather })
       .then((newItem) => {
+        // Updated the clothingItems array upon success
         setClothingItems((prevItems) => [newItem, ...prevItems]);
       })
       .catch(console.error);
 
-    // close the modal
+    // close the modal after the successful API response
     closeActiveModal();
   };
 
@@ -121,7 +122,6 @@ function App() {
               }
             />
           </Routes>
-
           <Footer />
         </div>
         <AddItemModal
