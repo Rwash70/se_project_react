@@ -52,7 +52,7 @@ function App() {
     // update clothingItems aray
     addItems({ name, imageUrl, weather })
       .then((newItem) => {
-        setClothingItems((prevItems) => [...prevItems, newItem]);
+        setClothingItems((prevItems) => [newItem, ...prevItems]);
       })
       .catch(console.error);
 
@@ -64,7 +64,7 @@ function App() {
     try {
       await deleteItems(id);
       setClothingItems((prevItems) =>
-        prevItems.filter((item) => item._id !== card._id)
+        prevItems.filter((item) => item._id !== id)
       );
       closeActiveModal();
     } catch (error) {

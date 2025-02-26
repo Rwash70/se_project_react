@@ -11,8 +11,12 @@ function ItemModal({ activeModal, onClose, card, onDelete }) {
   };
 
   const handleConfirmDelete = () => {
-    onDelete(card);
-    setIsDeleteModalOpen(false);
+    if (card && card._id) {
+      onDelete(card._id);
+      setIsDeleteModalOpen(false);
+    } else {
+      console.error("Error: Card ID is missing");
+    }
   };
 
   return (
