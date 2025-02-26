@@ -11,11 +11,11 @@ function ItemModal({ activeModal, onClose, card, onDelete }) {
   };
 
   const handleConfirmDelete = () => {
-    if (card && card._id) {
+    if (card && card._id !== undefined && card._id !== null) {
       onDelete(card._id);
       setIsDeleteModalOpen(false);
     } else {
-      console.error("Error: Card ID is missing");
+      console.error("Error: Card ID is missing or invalid", card);
     }
   };
 
@@ -28,23 +28,28 @@ function ItemModal({ activeModal, onClose, card, onDelete }) {
             type="button"
             className="modal__close modal__close_color_white"
           ></button>
-          <img
-            src={card.imageUrl}
-            alt={`image of ${card.name}`}
-            className="modal__image"
-          />
-          <div className="modal__footer">
-            <div>
-              <h2 className="modal__caption">{card.name}</h2>
-              <p className="modal__weather">Weather: {card.weather}</p>
-            </div>
-            <button
-              onClick={handleDeleteClick}
-              className="modal__delete-button"
-            >
-              Delete item
-            </button>
-          </div>
+
+          {card && (
+            <>
+              <img
+                src={card.imageUrl}
+                alt={`image of ${card.name}`}
+                className="modal__image"
+              />
+              <div className="modal__footer">
+                <div>
+                  <h2 className="modal__caption">{card.name}</h2>
+                  <p className="modal__weather">Weather: {card.weather}</p>
+                </div>
+                <button
+                  onClick={handleDeleteClick}
+                  className="modal__delete-button"
+                >
+                  Delete item
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

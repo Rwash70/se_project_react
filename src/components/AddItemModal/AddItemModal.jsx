@@ -25,11 +25,15 @@ export default function AddItemModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddItemModalSubmit({ name, imageUrl, weather });
-    // empty the inputs
-    setName("");
-    setImageUrl("");
-    setWeather("");
+    onAddItemModalSubmit({ name, imageUrl, weather })
+      .then(() => {
+        setName("");
+        setImageUrl("");
+        setWeather("");
+      })
+      .catch((error) => {
+        console.error("Submission failed:", error);
+      });
   };
 
   return (
