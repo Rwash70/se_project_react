@@ -42,7 +42,6 @@ function addItems({ name, weather, imageUrl }) {
     .catch((error) => {
       console.error("Error adding item:", error);
       throw error;
-      ole.error;
     });
 }
 

@@ -40,7 +40,6 @@ const Main = ({
             })}
         </ul>
       </section>
-      <Footer />
     </main>
   );
 };

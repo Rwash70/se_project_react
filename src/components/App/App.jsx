@@ -54,11 +54,10 @@ function App() {
       .then((newItem) => {
         // Updated the clothingItems array upon success
         setClothingItems((prevItems) => [newItem, ...prevItems]);
+        // close the modal after the successful API response
+        closeActiveModal();
       })
-      .catch(console.error);
-
-    // close the modal after the successful API response
-    closeActiveModal();
+      .catch(console.error); // Keep the modal open in case of an error
   };
 
   const handleDeleteItems = async (id) => {
