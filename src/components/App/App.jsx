@@ -50,14 +50,12 @@ function App() {
 
   const handleAddItemModalSubmit = ({ name, imageUrl, weather }) => {
     // Call the API to add the new item
-    addItems({ name, imageUrl, weather })
-      .then((newItem) => {
-        // Updated the clothingItems array upon success
-        setClothingItems((prevItems) => [newItem, ...prevItems]);
-        // close the modal after the successful API response
-        closeActiveModal();
-      })
-      .catch(console.error); // Keep the modal open in case of an error
+    return addItems({ name, imageUrl, weather }).then((newItem) => {
+      // Updated the clothingItems array upon success
+      setClothingItems((prevItems) => [newItem, ...prevItems]);
+      // close the modal after the successful API response
+      closeActiveModal();
+    });
   };
 
   const handleDeleteItems = async (id) => {

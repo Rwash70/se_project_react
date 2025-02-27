@@ -23,17 +23,16 @@ export default function AddItemModal({
     setWeather(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAddItemModalSubmit({ name, imageUrl, weather })
-      .then(() => {
-        setName("");
-        setImageUrl("");
-        setWeather("");
-      })
-      .catch((error) => {
-        console.error("Submission failed:", error);
-      });
+    try {
+      await onAddItemModalSubmit({ name, imageUrl, weather });
+      setName("");
+      setImageUrl("");
+      setWeather("");
+    } catch (error) {
+      console.error("Submission failed:", error);
+    }
   };
 
   return (
