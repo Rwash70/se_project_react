@@ -1,9 +1,10 @@
-import { useState } from "react";
-import "./ItemModal.css";
-import DeleteConfirmationModal from "../DeleteConfirmationModal/DeleteConfirmationModal";
+import { useContext, useState } from 'react';
+import './ItemModal.css';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext'; // Import context
+import DeleteConfirmationModal from '../DeleteConfirmationModal/DeleteConfirmationModal';
 
 function ItemModal({ activeModal, onClose, card, onDelete }) {
-  // Confirm before deleting
+  const { currentUser } = useContext(CurrentUserContext); // Access the currentUser context
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleDeleteClick = () => {
@@ -15,18 +16,18 @@ function ItemModal({ activeModal, onClose, card, onDelete }) {
       onDelete(card._id);
       setIsDeleteModalOpen(false);
     } else {
-      console.error("Error: Card ID is missing or invalid", card);
+      console.error('Error: Card ID is missing or invalid', card);
     }
   };
 
   return (
     <>
-      <div className={`modal ${activeModal === "preview" && "modal_opened"}`}>
-        <div className="modal__content modal__content_type_image">
+      <div className={`modal ${activeModal === 'preview' && 'modal_opened'}`}>
+        <div className='modal__content modal__content_type_image'>
           <button
             onClick={onClose}
-            type="button"
-            className="modal__close modal__close_color_white"
+            type='button'
+            className='modal__close modal__close_color_white'
           ></button>
 
           {card && (
@@ -34,19 +35,21 @@ function ItemModal({ activeModal, onClose, card, onDelete }) {
               <img
                 src={card.imageUrl}
                 alt={`image of ${card.name}`}
-                className="modal__image"
+                className='modal__image'
               />
-              <div className="modal__footer">
+              <div className='modal__footer'>
                 <div>
-                  <h2 className="modal__caption">{card.name}</h2>
-                  <p className="modal__weather">Weather: {card.weather}</p>
+                  <h2 className='modal__caption'>{card.name}</h2>
+                  <p className='modal__weather'>Weather: {card.weather}</p>
                 </div>
-                <button
-                  onClick={handleDeleteClick}
-                  className="modal__delete-button"
-                >
-                  Delete item
-                </button>
+                {currentUser && card.owner === currentUser.id && (
+                  <button
+                    onClick={handleDeleteClick}
+                    className='modal__delete-button'
+                  >
+                    Delete item
+                  </button>
+                )}
               </div>
             </>
           )}
