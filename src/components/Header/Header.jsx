@@ -11,13 +11,16 @@ function Header({
   weatherData,
   setIsLoginModalOpen,
   setIsRegisterModalOpen,
+  handleLoginClick,
+  handleRegisterClick,
 }) {
   const currentDate = new Date().toLocaleString('default', {
     month: 'long',
     day: 'numeric',
   });
 
-  const { currentUser } = useContext(CurrentUserContext); // Access the currentUser
+  // Access the currentUser from context
+  const { currentUser } = useContext(CurrentUserContext);
 
   return (
     <header className='header'>
@@ -55,9 +58,17 @@ function Header({
           </>
         ) : (
           <>
-            <button onClick={() => setIsLoginModalOpen(true)}>Login</button>
-            <button onClick={() => setIsRegisterModalOpen(true)}>
-              Register
+            <button
+              onClick={handleRegisterClick} // Open Register Modal
+              className='header__register-button'
+            >
+              Sign Up
+            </button>
+            <button
+              onClick={handleLoginClick} // Open Login Modal
+              className='header__login-button'
+            >
+              Log In
             </button>
           </>
         )}

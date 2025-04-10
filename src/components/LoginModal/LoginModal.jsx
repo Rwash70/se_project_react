@@ -1,19 +1,14 @@
-// src/components/LoginModal/LoginModal.jsx
 import './LoginModal.css';
 import ModalWithForm from '../ModalWithForm/ModalWithForm';
 import { useState } from 'react';
 
 export default function LoginModal({ isOpen, onClose, onLogin }) {
-  // State hooks for email and password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Form submission handler
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Trigger the login function passed as a prop
-    onLogin({ email, password });
-    // Clear inputs after submit (optional)
+    onLogin({ email, password }); // Trigger the login function
     setEmail('');
     setPassword('');
   };
@@ -49,6 +44,10 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
           required
         />
       </label>
+
+      <button type='submit' className='modal__button'>
+        Login
+      </button>
     </ModalWithForm>
   );
 }

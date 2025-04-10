@@ -77,12 +77,12 @@ function App() {
 
   // Opens the Login Modal
   const handleLoginClick = () => {
-    setIsLoginModalOpen(true);
+    setActiveModal('login');
   };
 
   // Opens the Register Modal
   const handleRegisterClick = () => {
-    setIsRegisterModalOpen(true);
+    setActiveModal('register');
   };
 
   // Closes any active modal
@@ -203,6 +203,7 @@ function App() {
             <Footer />
           </div>
 
+          {/* Modals */}
           <AddItemModal
             onClose={closeActiveModal}
             isOpen={activeModal === 'add-garment'}
@@ -216,20 +217,24 @@ function App() {
             onDelete={handleDeleteItems}
           />
 
+          {/* Login Modal */}
           <LoginModal
-            isOpen={isLoginModalOpen}
+            isOpen={activeModal === 'login'}
             onClose={closeActiveModal}
             onLogin={(userData) => {
               console.log('Login data: ', userData);
+              setIsLoggedIn(true);
               closeActiveModal();
             }}
           />
 
+          {/* Register Modal */}
           <RegisterModal
-            isOpen={isRegisterModalOpen}
+            isOpen={activeModal == 'register'}
             onClose={closeActiveModal}
             onRegister={(userData) => {
               console.log('Register data: ', userData);
+              setIsLoggedIn(true);
               closeActiveModal();
             }}
           />

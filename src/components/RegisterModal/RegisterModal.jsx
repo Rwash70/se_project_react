@@ -23,7 +23,7 @@ export default function RegisterModal({ isOpen, onClose, onRegister }) {
   return (
     <ModalWithForm
       title='Sign up'
-      name='register'
+      name='Sign Up or Log In'
       onClose={onClose}
       isOpen={isOpen}
       onSubmit={handleSubmit}

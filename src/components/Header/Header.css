@@ -56,3 +56,11 @@
   text-decoration: none;
   color: #000;
 }
+
+.header__login-button {
+  border: none;
+}
+
+.header__register-button {
+  border: none;
+}
