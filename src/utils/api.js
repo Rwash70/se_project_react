@@ -130,6 +130,7 @@ function removeCardLike(itemId, token) {
 }
 
 export {
+  baseUrl,
   getItems,
   addItems,
   deleteItems,

@@ -1,63 +1,58 @@
 import './RegisterModal.css';
 import ModalWithForm from '../ModalWithForm/ModalWithForm';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
-export default function RegisterModal({ isOpen, onClose, onRegister }) {
-  // State hooks for each input field
-  const [name, setName] = useState('');
-  const [avatar, setAvatar] = useState('');
+export default function RegisterModal({
+  isOpen,
+  onClose,
+  onRegister,
+  onSwitchToLogin,
+}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [avatar, setAvatar] = useState('');
 
-  // Form submission handler
+  const isFormFilled = email && password && name && avatar;
+  console.log({
+    isFormFilled,
+    email,
+    password,
+    name,
+    avatar,
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onRegister({ name, avatar, email, password });
-    // Clear inputs after submit (optional)
-    setName('');
-    setAvatar('');
+    if (isFormFilled) {
+      onRegister({ name, avatar, email, password });
+      resetForm();
+    }
+  };
+
+  const resetForm = useCallback(() => {
     setEmail('');
     setPassword('');
-  };
+    setName('');
+    setAvatar('');
+  }, []);
 
   return (
     <ModalWithForm
-      title='Sign up'
-      name='Sign Up or Log In'
+      title='Sign Up'
+      name='register'
       onClose={onClose}
       isOpen={isOpen}
       onSubmit={handleSubmit}
+      hideSubmitButton={true}
+      resetForm={resetForm}
     >
       <label className='modal__label'>
-        Name
-        <input
-          type='text'
-          className='modal__input'
-          placeholder='Enter your name'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </label>
-
-      <label className='modal__label'>
-        Avatar URL
-        <input
-          type='url'
-          className='modal__input'
-          placeholder='Link to your avatar'
-          value={avatar}
-          onChange={(e) => setAvatar(e.target.value)}
-          required
-        />
-      </label>
-
-      <label className='modal__label'>
-        Email
+        Email*
         <input
           type='email'
           className='modal__input'
-          placeholder='Enter your email'
+          placeholder='Email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -65,16 +60,65 @@ export default function RegisterModal({ isOpen, onClose, onRegister }) {
       </label>
 
       <label className='modal__label'>
-        Password
+        Password*
         <input
           type='password'
           className='modal__input'
-          placeholder='Create a password'
+          placeholder='Password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
       </label>
+
+      <label className='modal__label'>
+        Name*
+        <input
+          type='text'
+          className='modal__input'
+          placeholder='Name'
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </label>
+
+      <label className='modal__label'>
+        Avatar URL*
+        <input
+          type='url'
+          className='modal__input'
+          placeholder='Avatar URL'
+          value={avatar}
+          onChange={(e) => setAvatar(e.target.value)}
+          required
+        />
+      </label>
+
+      <div className='modal__switch-line'>
+        {/* Updated Sign Up button with dynamic background */}
+        <button
+          type='submit'
+          className='modal__submit-button'
+          style={{
+            backgroundColor: isFormFilled ? 'black' : 'gray', // Change background color based on form completion
+            cursor: isFormFilled ? 'pointer' : 'not-allowed', // Change cursor if button is disabled
+          }}
+          disabled={!isFormFilled} // Disable the button if the form is incomplete
+        >
+          Sign Up
+        </button>
+
+        {/* Show the Log In button only if the form is filled */}
+        <button
+          type='button'
+          className={`modal__switch-button`}
+          onClick={onSwitchToLogin}
+          disabled={!isFormFilled}
+        >
+          or Log In
+        </button>
+      </div>
     </ModalWithForm>
   );
 }

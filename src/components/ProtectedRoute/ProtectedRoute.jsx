@@ -1,7 +1,13 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ isLoggedIn, children }) {
-  return isLoggedIn ? children : <Navigate to='/' replace />;
+  const location = useLocation();
+
+  if (!isLoggedIn) {
+    return <Navigate to='/' replace state={{ from: location }} />;
+  }
+
+  return children;
 }
 
 export default ProtectedRoute;

@@ -1,0 +1,51 @@
+.modal__switch-line {
+  display: flex;
+  gap: 8px;
+}
+
+.modal__submit-button {
+  background-color: grey;
+  color: white;
+  border: none;
+  padding: 0 4px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  font-family: Cabinet Grotesk;
+  transition: background-color 0.3s ease;
+}
+
+/* Enabled state when form is filled */
+.modal__submit-button.enabled {
+  background-color: black;
+  color: white;
+  cursor: pointer;
+}
+
+.modal__submit-button.enabled:hover {
+  background-color: #1a1a1a;
+  opacity: 0.7;
+}
+
+.modal__switch-button {
+  /* background-color: none; */
+  border: none;
+  padding: 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: color 0.3s ease;
+  background-color: transparent;
+  color: grey;
+}
+
+/* When Login button is enabled (form is filled) */
+.modal__switch-button.enabled {
+  color: white;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.modal__switch-button.enabled:hover {
+  color: grey;
+}
