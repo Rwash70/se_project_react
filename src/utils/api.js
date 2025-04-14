@@ -11,13 +11,8 @@ function checkResponse(response) {
 }
 
 // Fetch all items with token in headers
-function getItems(token) {
-  return fetch(`${baseUrl}/items`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`, // Add Authorization header
-    },
-  })
+function getItems() {
+  return fetch(`${baseUrl}/items`)
     .then(checkResponse)
     .then((data) => {
       console.log('Items received:', data);

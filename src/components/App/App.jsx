@@ -15,14 +15,19 @@ import LoginModal from '../LoginModal/LoginModal';
 import RegisterModal from '../RegisterModal/RegisterModal';
 
 import { getWeather, filterWeatherData } from '../../utils/weatherApi';
-import { getItems, addItems, deleteItems } from '../../utils/api';
+import {
+  getItems,
+  addItems,
+  deleteItems,
+  addCardLike,
+  removeCardLike,
+} from '../../utils/api';
 import { authorize, getUserInfo, register } from '../../utils/auth';
 
 import CurrentTemperatureUnitContext from '../../contexts/CurrentTemperatureUnitContext';
-import { CurrentUserProvider } from '../../contexts/CurrentUserContext';
+// import { CurrentUserProvider } from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
-
-import { defaultClothingItems } from '../../utils/constants';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 function App() {
   const [weatherData, setWeatherData] = useState({
@@ -33,7 +38,7 @@ function App() {
     isDay: true,
   });
 
-  const [clothingItems, setClothingItems] = useState(defaultClothingItems);
+  const [clothingItems, setClothingItems] = useState([]);
   const [activeModal, setActiveModal] = useState('');
   const [selectedCard, setSelectedCard] = useState({});
   const [currentTemperatureUnit, setCurrentTemperatureUnit] = useState('F');
@@ -86,6 +91,27 @@ function App() {
     }
   };
 
+  const handleCardLike = ({ id, isLiked }) => {
+    const token = localStorage.getItem('jwt');
+    if (isLiked) {
+      removeCardLike(id, token).then(() => {
+        setClothingItems((prevItems) =>
+          prevItems.map((item) =>
+            item._id === id ? { ...item, isLiked: false } : item
+          )
+        );
+      });
+    } else {
+      addCardLike(id, token).then(() => {
+        setClothingItems((prevItems) =>
+          prevItems.map((item) =>
+            item._id === id ? { ...item, isLiked: true } : item
+          )
+        );
+      });
+    }
+  };
+
   useEffect(() => {
     getWeather(coordinates, APIkey)
       .then((data) => {
@@ -102,22 +128,17 @@ function App() {
         .then((user) => {
           setCurrentUser(user);
           setIsLoggedIn(true);
-          return getItems(token);
+          return getItems(token); // Fetch items using JWT
         })
         .then((items) => {
           setClothingItems(items);
         })
         .catch((err) => {
           console.error('Token validation or item fetch failed:', err);
-          handleSignOut();
+          handleSignOut(); // Handle sign-out in case of error
         });
     }
   }, []);
-
-  const handleCardLike = ({ id, isLiked }) => {
-    const token = localStorage.getItem('jwt');
-    // Implement add/remove like API if available
-  };
 
   const handleSignOut = () => {
     localStorage.removeItem('jwt');
@@ -125,25 +146,29 @@ function App() {
     setCurrentUser(null);
   };
 
-  const handleLoginSubmit = ({ email, password }) => {
-    authorize({ email, password })
-      .then((data) => {
-        localStorage.setItem('jwt', data.token);
-        setIsLoggedIn(true);
-        return getUserInfo(data.token);
-      })
-      .then((user) => {
-        setCurrentUser(user);
-        return getItems(localStorage.getItem('jwt'));
-      })
-      .then((items) => {
-        setClothingItems(items);
-        closeActiveModal();
-      })
-      .catch((err) => {
-        console.error('Login error:', err);
-        throw err; // Re-throw error to be caught in LoginModal
-      });
+  const handleLoginSubmit = async ({ email, password }) => {
+    try {
+      const data = await authorize({ email, password });
+
+      if (!data?.token) {
+        throw new Error('Token not received from server');
+      }
+
+      localStorage.setItem('jwt', data.token);
+      setIsLoggedIn(true);
+
+      const user = await getUserInfo(data.token);
+      debugger;
+      setCurrentUser(user);
+
+      const items = await getItems(data.token);
+      setClothingItems(items);
+
+      closeActiveModal();
+    } catch (err) {
+      console.error('Login error:', err.message || err);
+      throw err; // still re-throw so LoginModal can catch/display
+    }
   };
 
   const handleRegisterSubmit = ({ name, avatar, email, password }) => {
@@ -156,7 +181,9 @@ function App() {
   };
 
   return (
-    <CurrentUserProvider value={currentUser}>
+    <CurrentUserContext.Provider
+      value={{ currentUser, setCurrentUser, isLoggedIn, setIsLoggedIn }}
+    >
       <CurrentTemperatureUnitContext.Provider
         value={{ currentTemperatureUnit, handleToggleSwitchChange }}
       >
@@ -228,7 +255,7 @@ function App() {
           />
         </div>
       </CurrentTemperatureUnitContext.Provider>
-    </CurrentUserProvider>
+    </CurrentUserContext.Provider>
   );
 }
 

@@ -20,6 +20,7 @@ function ItemCard({ item, onCardClick, onDeleteItem, handleCardLike }) {
 
   // Handle the click of the like button
   const handleLikeClick = () => {
+    const newLikeState = !isLiked; // Step 1: Calculate the new like state (toggle)
     setIsLiked(!isLiked); // Toggle like state
     handleCardLike(item._id, !isLiked); // Pass card ID and new like state to parent handler
   };
@@ -27,6 +28,8 @@ function ItemCard({ item, onCardClick, onDeleteItem, handleCardLike }) {
   const handleCardClick = () => {
     onCardClick(item); // Call parent handler for card click
   };
+
+  console.log(item);
 
   return (
     <li className='card'>

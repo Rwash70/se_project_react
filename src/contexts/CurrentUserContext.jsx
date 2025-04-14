@@ -9,15 +9,15 @@ export const useCurrentUser = () => {
 };
 
 // Context provider component
-export const CurrentUserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+// export const CurrentUserProvider = ({ children }) => {
+//   const [currentUser, setCurrentUser] = useState(null);
+//   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  return (
-    <CurrentUserContext.Provider
-      value={{ currentUser, setCurrentUser, isLoggedIn, setIsLoggedIn }}
-    >
-      {children}
-    </CurrentUserContext.Provider>
-  );
-};
+//   return (
+//     <CurrentUserContext.Provider
+//       value={{ currentUser, setCurrentUser, isLoggedIn, setIsLoggedIn }}
+//     >
+//       {children}
+//     </CurrentUserContext.Provider>
+//   );
+// };
