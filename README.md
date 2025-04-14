@@ -13,7 +13,7 @@ You can find the backend repository: https://github.com/yourusername/se_project_
 
 ## Setup
 
-To run the backend, follow these steps:
+To run the backend, follow these steps: https://github.com/Rwash70/se_project_express.git
 
 1. Clone the repository
 2. Install dependencies with `npm install`
