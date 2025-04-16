@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import './Profile.css';
 import SideBar from '../SideBar/SideBar';
 import ClothesSection from '../ClothesSection/ClothesSection';
-import EditProfileModal from '../EditProfileModal/EditProfileModal'; // Importing the modal
+import EditProfileModal from '../EditProfileModal/EditProfileModal';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { updateUserInfo } from '../../utils/api';
 
@@ -14,30 +14,29 @@ function Profile({
   handleDeleteClick,
 }) {
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false); // Modal open/close state
 
-  // Function to handle updating user data
+  // Handles user info update from modal
   const handleUpdateUser = async (userData) => {
     try {
-      // Update the user info through the API
       const updatedUser = await updateUserInfo(userData);
-      // Set the updated user info into context
       setCurrentUser(updatedUser);
-      // Close the edit profile modal
-      setIsEditOpen(false);
+      setIsEditOpen(false); // Close modal after update
     } catch (err) {
       console.error('Failed to update user:', err);
     }
   };
 
+  console.log('----');
+  console.log(clothingItems);
+
   return (
     <div className='profile'>
       <section className='profile__sidebar'>
         <SideBar />
-        {/* Button to open the EditProfileModal */}
         <button
           className='profile__edit-btn'
-          onClick={() => setIsEditOpen(true)} // Open the modal to edit profile
+          onClick={() => setIsEditOpen(true)}
         >
           Edit Profile
         </button>
@@ -53,11 +52,10 @@ function Profile({
         />
       </section>
 
-      {/* EditProfileModal component - controls opening and passing the update function */}
       <EditProfileModal
-        isOpen={isEditOpen} // Controls modal visibility
-        onClose={() => setIsEditOpen(false)} // Close modal handler
-        onUpdateUser={handleUpdateUser} // Pass the update handler to modal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        onUpdateUser={handleUpdateUser}
       />
     </div>
   );

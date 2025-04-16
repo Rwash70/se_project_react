@@ -21,3 +21,13 @@
   width: 100%;
   border-radius: 22px;
 }
+
+.card__like-button {
+  padding: 7px 7px;
+  height: 113px;
+}
+
+.card__delete-button {
+  padding: 7px 7px;
+  height: 113px;
+}

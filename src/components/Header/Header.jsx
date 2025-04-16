@@ -60,13 +60,13 @@ function Header({
         ) : (
           <>
             <button
-              onClick={handleRegisterClick} // Open Register Modal
+              onClick={() => setIsRegisterModalOpen(true)} // Open Register Modal
               className='header__register-button'
             >
               Sign Up
             </button>
             <button
-              onClick={handleLoginClick} // Open Login Modal
+              onClick={() => setIsLoginModalOpen(true)} // Open Login Modal
               className='header__login-button'
             >
               Log In

@@ -6,6 +6,7 @@ export default function RegisterModal({
   isOpen,
   onClose,
   onRegister,
+  onToggleModal, // onToggleModal is used to switch modals
   onSwitchToLogin,
 }) {
   const [email, setEmail] = useState('');
@@ -96,7 +97,7 @@ export default function RegisterModal({
       </label>
 
       <div className='modal__switch-line'>
-        {/* Updated Sign Up button with dynamic background */}
+        {/* Sign Up button with dynamic background */}
         <button
           type='submit'
           className='modal__submit-button'
@@ -109,12 +110,15 @@ export default function RegisterModal({
           Sign Up
         </button>
 
-        {/* Show the Log In button only if the form is filled */}
+        {/* Log In button */}
         <button
           type='button'
-          className={`modal__switch-button`}
-          onClick={onSwitchToLogin}
-          disabled={!isFormFilled}
+          className='modal__switch-button'
+          onClick={() => {
+            console.log('Clicked: Log In inside RegisterModal');
+            onSwitchToLogin(); // Simply switch to the login modal
+          }}
+          disabled={false} // Ensure this button is always clickable
         >
           or Log In
         </button>

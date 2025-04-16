@@ -7,12 +7,47 @@ function checkResponse(response) {
       throw new Error(err.message || `Error: ${response.status}`);
     });
   }
-  return response.json(); // Return parsed JSON if the response is OK
+  return response.json();
+}
+
+// Helper function to get the token from localStorage or another storage method
+function getToken() {
+  const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+  if (!token) {
+    throw new Error('Authorization token is missing or invalid');
+  }
+  return token;
+}
+
+// Login function to authenticate and store token
+function login({ email, password }) {
+  return fetch(`${baseUrl}/signin`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  })
+    .then(checkResponse)
+    .then((data) => {
+      if (data.token) {
+        localStorage.setItem('token', data.token); // ✅ Save token
+        console.log('Token saved!');
+        return data;
+      } else {
+        throw new Error('Token not found in response');
+      }
+    });
 }
 
 // Fetch all items with token in headers
 function getItems() {
-  return fetch(`${baseUrl}/items`)
+  console.log('called');
+  return fetch(`${baseUrl}/items`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  })
     .then(checkResponse)
     .then((data) => {
       console.log('Items received:', data);
@@ -25,12 +60,14 @@ function getItems() {
 }
 
 // Add a new item with token in headers
-function addItems({ name, weather, imageUrl }, token) {
+function addItems({ name, weather, imageUrl }) {
+  const token = getToken();
+
   return fetch(`${baseUrl}/items`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`, // Add Authorization header
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ name, weather, imageUrl }),
   })
@@ -46,11 +83,13 @@ function addItems({ name, weather, imageUrl }, token) {
 }
 
 // Delete an item with token in headers
-function deleteItems(id, token) {
+function deleteItems(id) {
+  const token = getToken();
+
   return fetch(`${baseUrl}/items/${id}`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${token}`, // Add Authorization header
+      Authorization: `Bearer ${token}`,
     },
   })
     .then(checkResponse)
@@ -65,12 +104,14 @@ function deleteItems(id, token) {
 }
 
 // Update user info (name and avatar URL)
-function updateUserInfo({ name, avatar }, token) {
+function updateUserInfo({ name, avatar }) {
+  const token = getToken();
+
   return fetch(`${baseUrl}/users/me`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`, // Add Authorization header
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ name, avatar }),
   })
@@ -86,12 +127,14 @@ function updateUserInfo({ name, avatar }, token) {
 }
 
 // Add a like to an item
-function addCardLike(itemId, token) {
+function addCardLike(itemId) {
+  const token = getToken();
+
   return fetch(`${baseUrl}/items/${itemId}/like`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`, // Add Authorization header
+      Authorization: `Bearer ${token}`,
     },
   })
     .then(checkResponse)
@@ -106,11 +149,13 @@ function addCardLike(itemId, token) {
 }
 
 // Remove a like from an item
-function removeCardLike(itemId, token) {
+function removeCardLike(itemId) {
+  const token = getToken();
+
   return fetch(`${baseUrl}/items/${itemId}/like`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${token}`, // Add Authorization header
+      Authorization: `Bearer ${token}`,
     },
   })
     .then(checkResponse)
@@ -126,6 +171,7 @@ function removeCardLike(itemId, token) {
 
 export {
   baseUrl,
+  login,
   getItems,
   addItems,
   deleteItems,

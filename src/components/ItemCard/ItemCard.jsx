@@ -1,54 +1,92 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ItemCard.css';
 
-function ItemCard({ item, onCardClick, onDeleteItem, handleCardLike }) {
-  console.log('Rendering ItemCard:', item);
+function ItemCard({ item }) {
+  // Sample state to hold items (replace with actual data from your API)
+  // const [items, setItems] = useState([]);
 
-  // State to track if the item is liked by the user
-  const [isLiked, setIsLiked] = useState(false);
+  // Fetch items from the database on component mount
+  // useEffect(() => {
+  //   // Replace with your API call to get the items from the database
+  //   const fetchItems = async () => {
+  //     try {
+  //       const response = await fetch('/api/items'); // Replace with your endpoint
+  //       const data = await response.json();
+  //       setItems(data); // Set the fetched items in state
+  //     } catch (error) {
+  //       console.error('Error fetching items:', error);
+  //     }
+  //   };
 
-  // Check if the item is liked by the user (assuming currentUserId is passed as a prop or available in context)
-  useEffect(() => {
-    // Check if current user has liked the item (you can pass currentUserId as a prop or from context)
-    const currentUserId = 'currentUserId'; // Replace with actual user ID logic
-    if (item.likes && item.likes.includes(currentUserId)) {
-      setIsLiked(true); // Set true if current user has liked this item
-    } else {
-      setIsLiked(false); // Set false if the current user has not liked this item
+  //   fetchItems();
+  // }, []);
+
+  // Simulate currentUserId (replace this with actual logic for user ID)
+  const currentUserId = 'currentUserId'; // Replace with actual user ID logic
+
+  // Handle like toggle action
+  const handleLikeClick = async (itemId) => {
+    const updatedItems = items.map((item) => {
+      if (item._id === itemId) {
+        const newLikesState = !item.likes.includes(currentUserId)
+          ? [...item.likes, currentUserId]
+          : item.likes.filter((id) => id !== currentUserId);
+        return { ...item, likes: newLikesState };
+      }
+      return item;
+    });
+
+    setItems(updatedItems); // Update the local state to reflect the like change
+
+    try {
+      // Make an API call to update likes in the database
+      await fetch(`/api/items/${itemId}/like`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          likes: updatedItems.find((item) => item._id === itemId).likes,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      console.error('Error liking the item:', error);
     }
-  }, [item.likes]);
-
-  // Handle the click of the like button
-  const handleLikeClick = () => {
-    const newLikeState = !isLiked; // Step 1: Calculate the new like state (toggle)
-    setIsLiked(!isLiked); // Toggle like state
-    handleCardLike(item._id, !isLiked); // Pass card ID and new like state to parent handler
   };
 
-  const handleCardClick = () => {
-    onCardClick(item); // Call parent handler for card click
-  };
+  // Handle delete action (API call + local state update)
+  const handleDeleteItem = async (itemId) => {
+    try {
+      // Make an API call to delete the item from the database
+      const response = await fetch(`/api/items/${itemId}`, {
+        method: 'DELETE',
+      });
 
-  console.log(item);
+      if (!response.ok) {
+        throw new Error('Failed to delete item');
+      }
+
+      // Update local state by removing the deleted item
+      const updatedItems = items.filter((item) => item._id !== itemId);
+      setItems(updatedItems); // Re-render the component with the updated list of items
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
 
   return (
-    <li className='card'>
+    <li key={item._id} className='card'>
       <h2 className='card__name'>{item.name}</h2>
-      <img
-        onClick={handleCardClick}
-        className='card__image'
-        src={item.imageUrl}
-        alt={item.name}
-      />
+      <img className='card__image' src={item.imageUrl} alt={item.name} />
       <button
-        className={`card__like-button ${isLiked ? 'liked' : ''}`}
-        onClick={handleLikeClick}
+        className={`card__like-button ${
+          item.likes.includes(currentUserId) ? 'liked' : ''
+        }`}
+        onClick={() => handleLikeClick(item._id)}
       >
-        {isLiked ? 'Unlike' : 'Like'}
+        {item.likes.includes(currentUserId) ? 'Unlike' : 'Like'}
       </button>
       <button
         className='card__delete-button'
-        onClick={() => onDeleteItem(item._id)}
+        onClick={() => handleDeleteItem(item._id)}
       >
         Delete
       </button>

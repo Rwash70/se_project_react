@@ -6,7 +6,7 @@ export default function LoginModal({
   isOpen,
   onClose,
   onLogin,
-  onSwitchToRegister,
+  onSwitchToRegister, // Added prop for switching to Register
 }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -91,9 +91,8 @@ export default function LoginModal({
 
         <button
           type='button'
-          className={`modal__switch-button ${isFormFilled ? 'enabled' : ''}`}
-          onClick={onSwitchToRegister}
-          disabled={!isFormFilled}
+          className='modal__switch-button'
+          onClick={onSwitchToRegister} // Updated to call onSwitchToRegister to toggle to Register modal
         >
           Sign Up
         </button>
