@@ -55,11 +55,13 @@
 }
 
 .edit-profile-modal__submit {
-  background-color: #f5990b;
+  background-color: black;
+  height: 36px;
+  width: 128px;
   color: white;
   padding: 10px;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s ease;

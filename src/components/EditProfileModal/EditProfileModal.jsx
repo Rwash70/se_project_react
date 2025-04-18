@@ -22,10 +22,19 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
     setIsLoading(true);
     setError(null);
 
+    // Ensure that either name or avatar is provided
+    if (!name && !avatar) {
+      setError(
+        'You must provide at least one field (name or avatar) to update'
+      );
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const updatedUser = await updateUserInfo({ name, avatar });
-      onUpdateUser(updatedUser);
-      onClose();
+      onUpdateUser(updatedUser); // Update user context or parent state
+      onClose(); // Close the modal after successful update
     } catch (err) {
       setError('Failed to update profile');
     } finally {

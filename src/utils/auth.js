@@ -37,7 +37,7 @@ export const getUserInfo = (token) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   }).then((res) => (res.ok ? res.json() : Promise.reject('Invalid token')));
 };

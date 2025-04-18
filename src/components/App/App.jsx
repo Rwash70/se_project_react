@@ -1,3 +1,4 @@
+// Updates: Imports
 import { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
@@ -29,6 +30,7 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
+  // Updates: State declarations
   const [weatherData, setWeatherData] = useState({
     type: '',
     city: '',
@@ -42,26 +44,29 @@ function App() {
   const [currentTemperatureUnit, setCurrentTemperatureUnit] = useState('F');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+
+  // Updates: Modal state and activeModal handler
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const [activeModal, setActiveModal] = useState(''); // New state for managing active modals
+  const [activeModal, setActiveModal] = useState('');
 
-  // Handle switching between modals
+  // Updates: Modal switch handlers
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
-    setActiveModal('login'); // Set active modal to 'login'
+    setActiveModal('login');
   };
   const handleRegisterClick = () => {
     setIsRegisterModalOpen(true);
-    setActiveModal('register'); // Set active modal to 'register'
+    setActiveModal('register');
   };
 
   const closeActiveModal = () => {
     setIsLoginModalOpen(false);
     setIsRegisterModalOpen(false);
-    setActiveModal(''); // Reset active modal when closing
+    setActiveModal('');
   };
 
+  // Updates: Weather fetch
   useEffect(() => {
     getWeather(coordinates, APIkey)
       .then((data) => {
@@ -71,6 +76,7 @@ function App() {
       .catch(console.error);
   }, []);
 
+  // Updates: Auth and item fetch on mount
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     if (token) {
@@ -94,6 +100,7 @@ function App() {
     setCurrentUser(null);
   };
 
+  // Updates: Login handler
   const handleLoginSubmit = async ({ email, password }) => {
     try {
       const data = await authorize({ email, password });
@@ -117,6 +124,7 @@ function App() {
     }
   };
 
+  // Updates: Register handler with auto-login
   const handleRegisterSubmit = ({ name, avatar, email, password }) => {
     register({ name, avatar, email, password })
       .then(() => {
@@ -124,6 +132,59 @@ function App() {
         closeActiveModal();
       })
       .catch((err) => console.error('Registration error:', err));
+  };
+
+  // Updates: Handle like toggle action and update state
+  const handleLikeClick = async (itemId) => {
+    try {
+      const updatedLikesState = !item.likes.includes(currentUser._id)
+        ? [...item.likes, currentUser._id]
+        : item.likes.filter((id) => id !== currentUser._id);
+
+      const response = await fetch(`/api/items/${itemId}/like`, {
+        method: 'PATCH',
+        body: JSON.stringify({ likes: updatedLikesState }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`, // Include JWT token for authentication
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update like status');
+      }
+      // Update the state or re-fetch items after the like is toggled
+      const updatedItems = await getItems(localStorage.getItem('jwt'));
+      setClothingItems(updatedItems);
+    } catch (error) {
+      console.error('Error liking the item:', error);
+    }
+  };
+
+  // Updates: Handle delete action
+  const handleDeleteItem = async (itemId) => {
+    try {
+      const response = await fetch(`/api/items/${itemId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `Failed to delete item: ${errorData.message || 'Unknown error'}`
+        );
+      }
+
+      // Re-fetch items after deletion
+      const updatedItems = await getItems(localStorage.getItem('jwt'));
+      setClothingItems(updatedItems);
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
 
   return (
@@ -142,6 +203,8 @@ function App() {
               handleLoginClick={handleLoginClick}
               handleRegisterClick={handleRegisterClick}
             />
+
+            {/* Updates: Routes */}
             <Routes>
               <Route
                 path='/'
@@ -149,6 +212,8 @@ function App() {
                   <Main
                     weatherData={weatherData}
                     clothingItems={clothingItems}
+                    onLikeClick={handleLikeClick} // Pass the like handler
+                    onDeleteItem={handleDeleteItem} // Pass the delete handler
                   />
                 }
               />
@@ -164,10 +229,11 @@ function App() {
                 }
               />
             </Routes>
+
             <Footer />
           </div>
 
-          {/* Modal Components */}
+          {/* Updates: Modals */}
           {activeModal && (
             <>
               <AddItemModal onClose={closeActiveModal} />
@@ -179,7 +245,7 @@ function App() {
             </>
           )}
 
-          {/* Login Modal */}
+          {/* Updates: Login Modal */}
           <LoginModal
             isOpen={isLoginModalOpen}
             onClose={closeActiveModal}
@@ -187,20 +253,19 @@ function App() {
             onSwitchToRegister={() => {
               setIsLoginModalOpen(false);
               setIsRegisterModalOpen(true);
-              setActiveModal('register'); // Switch active modal to register
+              setActiveModal('register');
             }}
           />
 
-          {/* Register Modal */}
+          {/* Updates: Register Modal */}
           <RegisterModal
             isOpen={isRegisterModalOpen}
             onClose={closeActiveModal}
             onRegister={handleRegisterSubmit}
             onSwitchToLogin={() => {
-              console.log('Switching from Register to Login');
               setIsRegisterModalOpen(false);
               setIsLoginModalOpen(true);
-              setActiveModal('login'); // Switch active modal to login
+              setActiveModal('login');
             }}
           />
         </div>

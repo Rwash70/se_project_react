@@ -1,4 +1,4 @@
-import { checkResponse } from "./api"; // Import checkResponse from api.js
+import { checkResponse } from './api'; // Import checkResponse from api.js
 
 export const getWeather = ({ latitude, longitude }, APIkey) => {
   return fetch(
@@ -7,7 +7,6 @@ export const getWeather = ({ latitude, longitude }, APIkey) => {
 };
 
 export const filterWeatherData = (data) => {
-  console.log("data", data);
   const result = {};
   result.city = data.name;
   result.temp = {
@@ -26,10 +25,10 @@ const isDay = ({ sunrise, sunset }, now) => {
 
 const getWeatherType = (temperature) => {
   if (temperature >= 86) {
-    return "hot";
+    return 'hot';
   } else if (temperature >= 66 && temperature <= 86) {
-    return "warm";
+    return 'warm';
   } else {
-    return "cold";
+    return 'cold';
   }
 };

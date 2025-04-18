@@ -15,13 +15,6 @@ export default function RegisterModal({
   const [avatar, setAvatar] = useState('');
 
   const isFormFilled = email && password && name && avatar;
-  console.log({
-    isFormFilled,
-    email,
-    password,
-    name,
-    avatar,
-  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -102,10 +95,10 @@ export default function RegisterModal({
           type='submit'
           className='modal__submit-button'
           style={{
-            backgroundColor: isFormFilled ? 'black' : 'gray', // Change background color based on form completion
-            cursor: isFormFilled ? 'pointer' : 'not-allowed', // Change cursor if button is disabled
+            backgroundColor: isFormFilled ? 'black' : 'gray',
+            cursor: isFormFilled ? 'pointer' : 'not-allowed',
           }}
-          disabled={!isFormFilled} // Disable the button if the form is incomplete
+          disabled={!isFormFilled}
         >
           Sign Up
         </button>
@@ -114,11 +107,8 @@ export default function RegisterModal({
         <button
           type='button'
           className='modal__switch-button'
-          onClick={() => {
-            console.log('Clicked: Log In inside RegisterModal');
-            onSwitchToLogin(); // Simply switch to the login modal
-          }}
-          disabled={false} // Ensure this button is always clickable
+          onClick={onSwitchToLogin}
+          disabled={false}
         >
           or Log In
         </button>

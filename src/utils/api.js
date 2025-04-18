@@ -1,6 +1,6 @@
 const baseUrl = 'http://localhost:3001';
 
-// Function to handle the response and check if it's OK
+// Handle API responses
 function checkResponse(response) {
   if (!response.ok) {
     return response.json().then((err) => {
@@ -10,16 +10,17 @@ function checkResponse(response) {
   return response.json();
 }
 
-// Helper function to get the token from localStorage or another storage method
+// Get auth token from localStorage
 function getToken() {
-  const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
-  if (!token) {
+  const token = localStorage.getItem('jwt');
+  if (!token || token === 'undefined') {
+    console.warn('No valid token found');
     throw new Error('Authorization token is missing or invalid');
   }
   return token;
 }
 
-// Login function to authenticate and store token
+// Login user and store token
 function login({ email, password }) {
   return fetch(`${baseUrl}/signin`, {
     method: 'POST',
@@ -31,142 +32,144 @@ function login({ email, password }) {
     .then(checkResponse)
     .then((data) => {
       if (data.token) {
-        localStorage.setItem('token', data.token); // ✅ Save token
-        console.log('Token saved!');
+        localStorage.setItem('token', data.token);
         return data;
       } else {
-        throw new Error('Token not found in response');
+        throw new Error(' Token not found in response');
       }
     });
 }
 
-// Fetch all items with token in headers
+// Fetch all items
 function getItems() {
-  console.log('called');
-  return fetch(`${baseUrl}/items`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  })
-    .then(checkResponse)
-    .then((data) => {
-      console.log('Items received:', data);
-      return data;
+  try {
+    const token = getToken();
+    return fetch(`${baseUrl}/items`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .catch((error) => {
-      console.error('Error fetching items:', error);
-      throw error;
-    });
+      .then(checkResponse)
+      .then((data) => {
+        return data;
+      });
+  } catch (error) {
+    console.error(' Error fetching items:', error.message);
+    throw error;
+  }
 }
 
-// Add a new item with token in headers
+// Add a new item
 function addItems({ name, weather, imageUrl }) {
-  const token = getToken();
-
-  return fetch(`${baseUrl}/items`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ name, weather, imageUrl }),
-  })
-    .then(checkResponse)
-    .then((data) => {
-      console.log('Item added:', data);
-      return data;
+  try {
+    const token = getToken();
+    return fetch(`${baseUrl}/items`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name, weather, imageUrl }),
     })
-    .catch((error) => {
-      console.error('Error adding item:', error);
-      throw error;
-    });
+      .then(checkResponse)
+      .then((data) => {
+        return data;
+      });
+  } catch (error) {
+    console.error(' Error adding item:', error.message);
+    throw error;
+  }
 }
 
-// Delete an item with token in headers
+// Delete an item
 function deleteItems(id) {
-  const token = getToken();
-
-  return fetch(`${baseUrl}/items/${id}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then(checkResponse)
-    .then(() => {
-      console.log(`Item with id ${id} deleted.`);
-      return id;
+  try {
+    const token = getToken();
+    return fetch(`${baseUrl}/items/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .catch((error) => {
-      console.error('Delete request failed:', error);
-      throw error;
-    });
+      .then(checkResponse)
+      .then(() => {
+        return id;
+      });
+  } catch (error) {
+    console.error(' Delete request failed:', error.message);
+    throw error;
+  }
 }
 
-// Update user info (name and avatar URL)
+// Update user info with validation to ensure at least one field (name or avatar) is present
 function updateUserInfo({ name, avatar }) {
-  const token = getToken();
+  if (!name && !avatar) {
+    console.error(
+      'You must provide at least one field (name or avatar) to update'
+    );
+    throw new Error(
+      'You must provide at least one field (name or avatar) to update'
+    );
+  }
 
-  return fetch(`${baseUrl}/users/me`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ name, avatar }),
-  })
-    .then(checkResponse)
-    .then((data) => {
-      console.log('User info updated:', data);
-      return data;
+  try {
+    const token = getToken();
+    return fetch(`${baseUrl}/users/me`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name, avatar }),
     })
-    .catch((error) => {
-      console.error('Error updating user info:', error);
-      throw error;
-    });
+      .then(checkResponse)
+      .then((data) => {
+        return data;
+      });
+  } catch (error) {
+    console.error(' Error updating user info:', error.message);
+    throw error;
+  }
 }
-
-// Add a like to an item
+// Add a like
 function addCardLike(itemId) {
-  const token = getToken();
-
-  return fetch(`${baseUrl}/items/${itemId}/like`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then(checkResponse)
-    .then((data) => {
-      console.log('Item liked:', data);
-      return data;
+  try {
+    const token = getToken();
+    return fetch(`${baseUrl}/items/${itemId}/like`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .catch((error) => {
-      console.error('Error liking item:', error);
-      throw error;
-    });
+      .then(checkResponse)
+      .then((data) => {
+        return data;
+      });
+  } catch (error) {
+    console.error(' Error liking item:', error.message);
+    throw error;
+  }
 }
 
-// Remove a like from an item
+// Remove a like
 function removeCardLike(itemId) {
-  const token = getToken();
-
-  return fetch(`${baseUrl}/items/${itemId}/like`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then(checkResponse)
-    .then(() => {
-      console.log('Item unliked.');
-      return itemId;
+  try {
+    const token = getToken();
+    return fetch(`${baseUrl}/items/${itemId}/like`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
-    .catch((error) => {
-      console.error('Error unliking item:', error);
-      throw error;
-    });
+      .then(checkResponse)
+      .then(() => {
+        return itemId;
+      });
+  } catch (error) {
+    console.error(' Error unliking item:', error.message);
+    throw error;
+  }
 }
 
 export {

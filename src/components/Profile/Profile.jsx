@@ -27,9 +27,6 @@ function Profile({
     }
   };
 
-  console.log('----');
-  console.log(clothingItems);
-
   return (
     <div className='profile'>
       <section className='profile__sidebar'>

@@ -21,7 +21,6 @@ function Header({
 
   // Access the currentUser from context
   const { currentUser } = useContext(CurrentUserContext);
-  console.log('currentUser in header', currentUser);
 
   return (
     <header className='header'>

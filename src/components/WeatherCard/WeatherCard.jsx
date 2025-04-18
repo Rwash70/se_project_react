@@ -1,7 +1,7 @@
-import "./WeatherCard.css";
-import { weatherOptions, defaultWeatherOptions } from "../../utils/constants";
-import { useContext } from "react";
-import CurrentTemperatureUnitContext from "../../contexts/CurrentTemperatureUnitContext";
+import './WeatherCard.css';
+import { weatherOptions, defaultWeatherOptions } from '../../utils/constants';
+import { useContext } from 'react';
+import CurrentTemperatureUnitContext from '../../contexts/CurrentTemperatureUnitContext';
 
 function WeatherCard({ weatherData }) {
   const { currentTemperatureUnit } = useContext(CurrentTemperatureUnitContext);
@@ -12,7 +12,7 @@ function WeatherCard({ weatherData }) {
     );
   });
 
-  let weatherOptionUrl = "";
+  let weatherOptionUrl = '';
   if (filteredOptions.length > 0) {
     weatherOptionUrl = filteredOptions[0]?.url;
   } else {
@@ -21,17 +21,15 @@ function WeatherCard({ weatherData }) {
       : defaultWeatherOptions.night.url;
   }
 
-  console.log(weatherOptionUrl);
-
   return (
-    <section className="weather-card">
-      <div className="weather-card__temp">
+    <section className='weather-card'>
+      <div className='weather-card__temp'>
         {weatherData.temp[currentTemperatureUnit]} {currentTemperatureUnit}
       </div>
       <img
         src={weatherOptionUrl}
-        alt="weather"
-        className="weather-card__image"
+        alt='weather'
+        className='weather-card__image'
       />
     </section>
   );

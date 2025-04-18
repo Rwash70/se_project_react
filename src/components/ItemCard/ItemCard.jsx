@@ -1,72 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import './ItemCard.css';
 
-function ItemCard({ item }) {
-  // Sample state to hold items (replace with actual data from your API)
-  // const [items, setItems] = useState([]);
+function ItemCard({ item, onDelete }) {
+  const currentUserId = 'currentUserId'; // Replace this with actual logic to get the user ID, e.g., from context
 
-  // Fetch items from the database on component mount
-  // useEffect(() => {
-  //   // Replace with your API call to get the items from the database
-  //   const fetchItems = async () => {
-  //     try {
-  //       const response = await fetch('/api/items'); // Replace with your endpoint
-  //       const data = await response.json();
-  //       setItems(data); // Set the fetched items in state
-  //     } catch (error) {
-  //       console.error('Error fetching items:', error);
-  //     }
-  //   };
-
-  //   fetchItems();
-  // }, []);
-
-  // Simulate currentUserId (replace this with actual logic for user ID)
-  const currentUserId = 'currentUserId'; // Replace with actual user ID logic
+  // Ensure item is properly passed and has likes property
+  if (!item || !Array.isArray(item.likes)) {
+    console.error('Item or likes array is missing');
+    return null; // Or return a loading/error UI component
+  }
 
   // Handle like toggle action
   const handleLikeClick = async (itemId) => {
-    const updatedItems = items.map((item) => {
-      if (item._id === itemId) {
-        const newLikesState = !item.likes.includes(currentUserId)
-          ? [...item.likes, currentUserId]
-          : item.likes.filter((id) => id !== currentUserId);
-        return { ...item, likes: newLikesState };
-      }
-      return item;
-    });
+    if (!item || !item.likes) {
+      console.error('Item or likes property is undefined');
+      return;
+    }
 
-    setItems(updatedItems); // Update the local state to reflect the like change
+    const updatedLikesState = !item.likes.includes(currentUserId)
+      ? [...item.likes, currentUserId]
+      : item.likes.filter((id) => id !== currentUserId);
 
     try {
-      // Make an API call to update likes in the database
-      await fetch(`/api/items/${itemId}/like`, {
+      const response = await fetch(`/api/items/${itemId}/like`, {
         method: 'PATCH',
-        body: JSON.stringify({
-          likes: updatedItems.find((item) => item._id === itemId).likes,
-        }),
-        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ likes: updatedLikesState }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Include JWT token for authentication
+        },
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to update like status');
+      }
     } catch (error) {
       console.error('Error liking the item:', error);
     }
   };
 
-  // Handle delete action (API call + local state update)
+  // Handle delete action (API call)
   const handleDeleteItem = async (itemId) => {
     try {
-      // Make an API call to delete the item from the database
+      const authToken = localStorage.getItem('jwt'); // Replace with your preferred storage mechanism
+
       const response = await fetch(`/api/items/${itemId}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`, // Include the JWT token in the Authorization header
+        },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete item');
+        const errorData = await response.json();
+        throw new Error(
+          `Failed to delete item: ${errorData.message || 'Unknown error'}`
+        );
       }
 
-      // Update local state by removing the deleted item
-      const updatedItems = items.filter((item) => item._id !== itemId);
-      setItems(updatedItems); // Re-render the component with the updated list of items
+      // Call onDelete to remove the item from the list in the parent component
+      onDelete(itemId);
     } catch (error) {
       console.error('Error deleting item:', error);
     }
