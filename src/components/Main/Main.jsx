@@ -1,10 +1,10 @@
-import "./Main.css";
-import WeatherCard from "../WeatherCard/WeatherCard";
-import ItemCard from "../ItemCard/ItemCard";
-import { useContext } from "react";
-import CurrentTemperatureUnitContext from "../../contexts/CurrentTemperatureUnitContext";
-import Footer from "../footer/footer";
-import { deleteItems } from "../../utils/api";
+import './Main.css';
+import WeatherCard from '../WeatherCard/WeatherCard';
+import ItemCard from '../ItemCard/ItemCard';
+import { useContext } from 'react';
+import CurrentTemperatureUnitContext from '../../contexts/CurrentTemperatureUnitContext';
+import Footer from '../footer/footer';
+import { deleteItems } from '../../utils/api';
 
 // The Main component includes WeatherCard and ItemCard components.
 const Main = ({
@@ -18,12 +18,12 @@ const Main = ({
   return (
     <main>
       <WeatherCard weatherData={weatherData} />
-      <section className="cards">
-        <p className="cards__text">
-          Today is {weatherData.temp[currentTemperatureUnit]} &deg;{" "}
+      <section className='cards'>
+        <p className='cards__text'>
+          Today is {weatherData.temp[currentTemperatureUnit]} &deg;{' '}
           {currentTemperatureUnit}/ You may want to wear:
         </p>
-        <ul className="cards__list">
+        <ul className='cards__list'>
           {clothingItems
             .filter((item) => {
               return item.weather === weatherData.type;
@@ -33,7 +33,7 @@ const Main = ({
                 <ItemCard
                   key={item._id}
                   item={item}
-                  onCardClick={handleCardClick}
+                  handleCardClick={handleCardClick}
                   onDeleteItem={handleDeleteItems}
                 />
               );

@@ -33,7 +33,7 @@ function ClothesSection({
               key={item._id}
               item={item}
               onDeleteItem={() => handleDeleteClick(item._id)}
-              onCardClick={handleCardClick}
+              handleCardClick={handleCardClick}
             />
           ))
         ) : (

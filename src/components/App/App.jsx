@@ -51,6 +51,16 @@ function App() {
   const [activeModal, setActiveModal] = useState('');
 
   // Updates: Modal switch handlers
+  const handleAddClick = () => {
+    setActiveModal('add-item');
+  };
+
+  //opens the itemModal with the card that was clicked
+  const handleCardClick = (card) => {
+    setActiveModal('preview');
+    setSelectedCard(card);
+  };
+
   const handleLoginClick = () => {
     setIsLoginModalOpen(true);
     setActiveModal('login');
@@ -122,6 +132,17 @@ function App() {
       console.error('Login error:', err.message || err);
       throw err;
     }
+  };
+
+  const handleAddItemModalSubmit = ({ name, imageUrl, weather }) => {
+    // Call the API to add the new item
+
+    return addItems({ name, imageUrl, weather }).then((newItem) => {
+      // Updated the clothingItems array upon success
+      setClothingItems((prevItems) => [newItem, ...prevItems]);
+      // close the modal after the successful API response
+      closeActiveModal();
+    });
   };
 
   // Updates: Register handler with auto-login
@@ -202,6 +223,7 @@ function App() {
               setIsRegisterModalOpen={handleRegisterClick}
               handleLoginClick={handleLoginClick}
               handleRegisterClick={handleRegisterClick}
+              handleAddClick={handleAddClick}
             />
 
             {/* Updates: Routes */}
@@ -214,6 +236,7 @@ function App() {
                     clothingItems={clothingItems}
                     onLikeClick={handleLikeClick} // Pass the like handler
                     onDeleteItem={handleDeleteItem} // Pass the delete handler
+                    handleCardClick={handleCardClick}
                   />
                 }
               />
@@ -223,7 +246,9 @@ function App() {
                   <ProtectedRoute isLoggedIn={isLoggedIn}>
                     <Profile
                       clothingItems={clothingItems}
+                      handleAddClick={handleAddClick}
                       weatherData={weatherData}
+                      handleCardClick={handleCardClick}
                     />
                   </ProtectedRoute>
                 }
@@ -236,7 +261,11 @@ function App() {
           {/* Updates: Modals */}
           {activeModal && (
             <>
-              <AddItemModal onClose={closeActiveModal} />
+              <AddItemModal
+                onClose={closeActiveModal}
+                isOpen={activeModal === 'add-item'}
+                onAddItemModalSubmit={handleAddItemModalSubmit}
+              />
               <ItemModal
                 activeModal={activeModal}
                 card={selectedCard}

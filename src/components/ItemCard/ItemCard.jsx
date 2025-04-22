@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './ItemCard.css';
+import { deleteItems } from '../../utils/api';
 
-function ItemCard({ item, onDelete }) {
+function ItemCard({ item, onDelete, handleCardClick }) {
   const currentUserId = 'currentUserId'; // Replace this with actual logic to get the user ID, e.g., from context
 
   // Ensure item is properly passed and has likes property
@@ -42,24 +43,25 @@ function ItemCard({ item, onDelete }) {
   // Handle delete action (API call)
   const handleDeleteItem = async (itemId) => {
     try {
-      const authToken = localStorage.getItem('jwt'); // Replace with your preferred storage mechanism
+      const authToken = localStorage.getItem('jwt');
 
-      const response = await fetch(`/api/items/${itemId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`, // Include the JWT token in the Authorization header
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          `Failed to delete item: ${errorData.message || 'Unknown error'}`
-        );
+      if (!authToken) {
+        throw new Error('Authentication token is missing');
       }
 
-      // Call onDelete to remove the item from the list in the parent component
+      const response = await deleteItems(itemId);
+
+      if (!response.ok) {
+        let errorMessage = 'Unknown error';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (err) {
+          console.warn('No JSON in error response');
+        }
+        throw new Error(`Failed to delete item: ${errorMessage}`);
+      }
+
       onDelete(itemId);
     } catch (error) {
       console.error('Error deleting item:', error);
@@ -69,7 +71,12 @@ function ItemCard({ item, onDelete }) {
   return (
     <li key={item._id} className='card'>
       <h2 className='card__name'>{item.name}</h2>
-      <img className='card__image' src={item.imageUrl} alt={item.name} />
+      <img
+        onClick={() => handleCardClick(item)}
+        className='card__image'
+        src={item.imageUrl}
+        alt={item.name}
+      />
       <button
         className={`card__like-button ${
           item.likes.includes(currentUserId) ? 'liked' : ''

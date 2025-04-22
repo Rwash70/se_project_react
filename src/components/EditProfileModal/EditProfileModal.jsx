@@ -76,7 +76,7 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
             type='submit'
             disabled={isLoading}
           >
-            {isLoading ? 'Updating...' : 'Save'}
+            {isLoading ? 'Updating...' : 'Save changes'}
           </button>
         </form>
       </div>
