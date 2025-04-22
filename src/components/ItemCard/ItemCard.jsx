@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './ItemCard.css';
-import { deleteItems } from '../../utils/api';
+import { deleteItems, addCardLike, removeCardLike } from '../../utils/api';
 
 function ItemCard({ item, onDelete, handleCardClick }) {
   const currentUserId = 'currentUserId'; // Replace this with actual logic to get the user ID, e.g., from context
@@ -11,29 +11,24 @@ function ItemCard({ item, onDelete, handleCardClick }) {
     return null; // Or return a loading/error UI component
   }
 
-  // Handle like toggle action
+  // Handle like toggle action using API helpers
   const handleLikeClick = async (itemId) => {
     if (!item || !item.likes) {
       console.error('Item or likes property is undefined');
       return;
     }
 
-    const updatedLikesState = !item.likes.includes(currentUserId)
-      ? [...item.likes, currentUserId]
-      : item.likes.filter((id) => id !== currentUserId);
+    const hasLiked = item.likes.includes(currentUserId);
 
     try {
-      const response = await fetch(`/api/items/${itemId}/like`, {
-        method: 'PATCH',
-        body: JSON.stringify({ likes: updatedLikesState }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Include JWT token for authentication
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update like status');
+      if (hasLiked) {
+        // Call removeCardLike to unlike the item
+        await removeCardLike(itemId);
+        item.likes = item.likes.filter((id) => id !== currentUserId); // Update local UI state
+      } else {
+        // Call addCardLike to like the item
+        await addCardLike(itemId);
+        item.likes.push(currentUserId); // Update local UI state
       }
     } catch (error) {
       console.error('Error liking the item:', error);
@@ -44,24 +39,12 @@ function ItemCard({ item, onDelete, handleCardClick }) {
   const handleDeleteItem = async (itemId) => {
     try {
       const authToken = localStorage.getItem('jwt');
-
       if (!authToken) {
         throw new Error('Authentication token is missing');
       }
 
-      const response = await deleteItems(itemId);
-
-      if (!response.ok) {
-        let errorMessage = 'Unknown error';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (err) {
-          console.warn('No JSON in error response');
-        }
-        throw new Error(`Failed to delete item: ${errorMessage}`);
-      }
-
+      // Call the deleteItems function to delete the item
+      await deleteItems(itemId); // No need to check response.ok, it's handled in api.js
       onDelete(itemId);
     } catch (error) {
       console.error('Error deleting item:', error);
@@ -81,13 +64,13 @@ function ItemCard({ item, onDelete, handleCardClick }) {
         className={`card__like-button ${
           item.likes.includes(currentUserId) ? 'liked' : ''
         }`}
-        onClick={() => handleLikeClick(item._id)}
+        onClick={() => handleLikeClick(item._id)} // On Like/Unlike button click
       >
         {item.likes.includes(currentUserId) ? 'Unlike' : 'Like'}
       </button>
       <button
         className='card__delete-button'
-        onClick={() => handleDeleteItem(item._id)}
+        onClick={() => handleDeleteItem(item._id)} // On Delete button click
       >
         Delete
       </button>
