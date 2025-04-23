@@ -1,6 +1,5 @@
-// Updates: Imports
 import { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 
 // Import components and API methods
@@ -23,14 +22,16 @@ import {
   addCardLike,
   removeCardLike,
 } from '../../utils/api';
-import { authorize, getUserInfo, register } from '../../utils/auth';
+import { authorize, BASE_URL, getUserInfo, register } from '../../utils/auth';
 
 import CurrentTemperatureUnitContext from '../../contexts/CurrentTemperatureUnitContext';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
-  // Updates: State declarations
+  const navigate = useNavigate(); // You can now use this to navigate programmatically
+
+  // State declarations
   const [weatherData, setWeatherData] = useState({
     type: '',
     city: '',
@@ -45,17 +46,14 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Updates: Modal state and activeModal handler
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [activeModal, setActiveModal] = useState('');
 
-  // Updates: Modal switch handlers
   const handleAddClick = () => {
     setActiveModal('add-item');
   };
 
-  //opens the itemModal with the card that was clicked
   const handleCardClick = (card) => {
     setActiveModal('preview');
     setSelectedCard(card);
@@ -76,7 +74,6 @@ function App() {
     setActiveModal('');
   };
 
-  // Updates: Weather fetch
   useEffect(() => {
     getWeather(coordinates, APIkey)
       .then((data) => {
@@ -86,7 +83,6 @@ function App() {
       .catch(console.error);
   }, []);
 
-  // Updates: Auth and item fetch on mount
   useEffect(() => {
     const token = localStorage.getItem('jwt');
     if (token) {
@@ -110,7 +106,6 @@ function App() {
     setCurrentUser(null);
   };
 
-  // Updates: Login handler
   const handleLoginSubmit = async ({ email, password }) => {
     try {
       const data = await authorize({ email, password });
@@ -128,6 +123,7 @@ function App() {
       setClothingItems(items);
 
       closeActiveModal();
+      navigate('/'); // Add this line to redirect to the homepage
     } catch (err) {
       console.error('Login error:', err.message || err);
       throw err;
@@ -135,17 +131,12 @@ function App() {
   };
 
   const handleAddItemModalSubmit = ({ name, imageUrl, weather }) => {
-    // Call the API to add the new item
-
     return addItems({ name, imageUrl, weather }).then((newItem) => {
-      // Updated the clothingItems array upon success
       setClothingItems((prevItems) => [newItem, ...prevItems]);
-      // close the modal after the successful API response
       closeActiveModal();
     });
   };
 
-  // Updates: Register handler with auto-login
   const handleRegisterSubmit = ({ name, avatar, email, password }) => {
     register({ name, avatar, email, password })
       .then(() => {
@@ -155,7 +146,6 @@ function App() {
       .catch((err) => console.error('Registration error:', err));
   };
 
-  // Updates: Handle like toggle action and update state
   const handleLikeClick = async (itemId) => {
     try {
       const updatedLikesState = !item.likes.includes(currentUser._id)
@@ -167,14 +157,14 @@ function App() {
         body: JSON.stringify({ likes: updatedLikesState }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`, // Include JWT token for authentication
+          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
         },
       });
 
       if (!response.ok) {
         throw new Error('Failed to update like status');
       }
-      // Update the state or re-fetch items after the like is toggled
+
       const updatedItems = await getItems(localStorage.getItem('jwt'));
       setClothingItems(updatedItems);
     } catch (error) {
@@ -182,10 +172,9 @@ function App() {
     }
   };
 
-  // Updates: Handle delete action
   const handleDeleteItem = async (itemId) => {
     try {
-      const response = await fetch(`/api/items/${itemId}`, {
+      const response = await fetch(`${BASE_URL}/items/${itemId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -200,12 +189,20 @@ function App() {
         );
       }
 
-      // Re-fetch items after deletion
       const updatedItems = await getItems(localStorage.getItem('jwt'));
       setClothingItems(updatedItems);
     } catch (error) {
       console.error('Error deleting item:', error);
     }
+  };
+
+  // Handle delete card (modal action)
+  const handleDeleteCard = (cardId) => {
+    console.log('Delete card with ID:', cardId);
+    // Call handleDeleteItem to delete the card from the backend
+    handleDeleteItem(cardId);
+    // Close the modal after deletion
+    closeActiveModal();
   };
 
   return (
@@ -224,9 +221,9 @@ function App() {
               handleLoginClick={handleLoginClick}
               handleRegisterClick={handleRegisterClick}
               handleAddClick={handleAddClick}
+              currentTemperatureUnit={currentTemperatureUnit} // Pass currentTemperatureUnit to Header
             />
 
-            {/* Updates: Routes */}
             <Routes>
               <Route
                 path='/'
@@ -234,8 +231,8 @@ function App() {
                   <Main
                     weatherData={weatherData}
                     clothingItems={clothingItems}
-                    onLikeClick={handleLikeClick} // Pass the like handler
-                    onDeleteItem={handleDeleteItem} // Pass the delete handler
+                    onLikeClick={handleLikeClick}
+                    onDeleteItem={handleDeleteItem}
                     handleCardClick={handleCardClick}
                   />
                 }
@@ -249,6 +246,7 @@ function App() {
                       handleAddClick={handleAddClick}
                       weatherData={weatherData}
                       handleCardClick={handleCardClick}
+                      handleLogOut={handleSignOut}
                     />
                   </ProtectedRoute>
                 }
@@ -258,7 +256,6 @@ function App() {
             <Footer />
           </div>
 
-          {/* Updates: Modals */}
           {activeModal && (
             <>
               <AddItemModal
@@ -269,12 +266,12 @@ function App() {
               <ItemModal
                 activeModal={activeModal}
                 card={selectedCard}
+                onDelete={handleDeleteCard}
                 onClose={closeActiveModal}
               />
             </>
           )}
 
-          {/* Updates: Login Modal */}
           <LoginModal
             isOpen={isLoginModalOpen}
             onClose={closeActiveModal}
@@ -286,7 +283,6 @@ function App() {
             }}
           />
 
-          {/* Updates: Register Modal */}
           <RegisterModal
             isOpen={isRegisterModalOpen}
             onClose={closeActiveModal}

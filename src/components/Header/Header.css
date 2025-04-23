@@ -52,6 +52,13 @@
   font-weight: 700;
 }
 
+.header__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .header__link {
   text-decoration: none;
   color: #000;

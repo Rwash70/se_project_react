@@ -4,8 +4,8 @@ import './Header.css';
 import logo from '../../assets/logo.svg';
 import avatar from '../../assets/avatar.png';
 import { useContext } from 'react';
-import { CurrentUserContext } from '../../contexts/CurrentUserContext'; // Import the context
-
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import CurrentTemperatureUnitContext from '../../contexts/CurrentTemperatureUnitContext';
 function Header({
   handleAddClick,
   weatherData,
@@ -19,8 +19,15 @@ function Header({
     day: 'numeric',
   });
 
-  // Access the currentUser from context
   const { currentUser } = useContext(CurrentUserContext);
+  const { currentTemperatureUnit } = useContext(CurrentTemperatureUnitContext);
+
+  const getTemperature = () => {
+    if (!weatherData || typeof weatherData.temp !== 'number') return '--°';
+    return currentTemperatureUnit === 'F'
+      ? `${weatherData.temp}°F`
+      : `${Math.round(((weatherData.temp - 32) * 5) / 9)}°C`;
+  };
 
   return (
     <header className='header'>
@@ -30,7 +37,7 @@ function Header({
         </Link>
 
         <p className='header__date-and-location'>
-          {currentDate}, {weatherData.city}
+          {currentDate}, {weatherData.city} {getTemperature()}
         </p>
       </div>
 
@@ -49,7 +56,7 @@ function Header({
               <div className='header__user-container'>
                 <p className='header__username'>{currentUser.name}</p>
                 <img
-                  src={avatar}
+                  src={currentUser.avatar}
                   alt={currentUser.name}
                   className='header__avatar'
                 />
@@ -59,13 +66,13 @@ function Header({
         ) : (
           <>
             <button
-              onClick={() => setIsRegisterModalOpen(true)} // Open Register Modal
+              onClick={() => setIsRegisterModalOpen(true)}
               className='header__register-button'
             >
               Sign Up
             </button>
             <button
-              onClick={() => setIsLoginModalOpen(true)} // Open Login Modal
+              onClick={() => setIsLoginModalOpen(true)}
               className='header__login-button'
             >
               Log In

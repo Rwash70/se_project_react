@@ -53,27 +53,21 @@ function ItemCard({ item, onDelete, handleCardClick }) {
 
   return (
     <li key={item._id} className='card'>
-      <h2 className='card__name'>{item.name}</h2>
+      <div className='card__name-container'>
+        <h2 className='card__name'>{item.name}</h2>
+        <button
+          className={`card__like-button ${
+            item.likes.includes(currentUserId) ? 'liked' : ''
+          }`}
+          onClick={() => handleLikeClick(item._id)} // On Like/Unlike button click
+        ></button>
+      </div>
       <img
         onClick={() => handleCardClick(item)}
         className='card__image'
         src={item.imageUrl}
         alt={item.name}
       />
-      <button
-        className={`card__like-button ${
-          item.likes.includes(currentUserId) ? 'liked' : ''
-        }`}
-        onClick={() => handleLikeClick(item._id)} // On Like/Unlike button click
-      >
-        {item.likes.includes(currentUserId) ? 'Unlike' : 'Like'}
-      </button>
-      <button
-        className='card__delete-button'
-        onClick={() => handleDeleteItem(item._id)} // On Delete button click
-      >
-        Delete
-      </button>
     </li>
   );
 }

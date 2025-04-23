@@ -6,9 +6,15 @@
   justify-content: center;
 }
 
-.card__name {
+.card__name-container {
   position: absolute;
   top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card__name {
   margin: 0;
   font-family: Cabinet Grotesk;
   font-size: 16px;
@@ -18,16 +24,33 @@
 }
 
 .card__image {
-  width: 100%;
-  border-radius: 22px;
+  width: 323px;
+  height: 326px;
+  border-radius: 19px;
 }
 
 .card__like-button {
   padding: 7px 7px;
-  height: 113px;
+  background-image: url(../../assets/Like.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 24px;
+  height: 22px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: color#000 0.3s ease;
+}
+
+.card__like-button:hover {
+  opacity: 0.7;
+}
+
+.card__like-button.liked {
+  background-image: url(../../assets/color-Liked.svg); /* pink version of heart */
 }
 
 .card__delete-button {
   padding: 7px 7px;
-  height: 113px;
+  height: 120px;
 }

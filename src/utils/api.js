@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:3001';
+import { BASE_URL } from './auth';
 
 // Handle API responses
 function checkResponse(response) {
@@ -30,7 +30,7 @@ function getAuthHeaders(contentType = true) {
 
 // Login
 function login({ email, password }) {
-  return fetch(`${baseUrl}/signin`, {
+  return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -47,14 +47,14 @@ function login({ email, password }) {
 
 // Get items
 function getItems() {
-  return fetch(`${baseUrl}/items`, {
+  return fetch(`${BASE_URL}/items`, {
     headers: getAuthHeaders(false),
   }).then(checkResponse);
 }
 
 // Add item
 function addItems({ name, weather, imageUrl }) {
-  return fetch(`${baseUrl}/items`, {
+  return fetch(`${BASE_URL}/items`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify({ name, weather, imageUrl }),
@@ -63,7 +63,7 @@ function addItems({ name, weather, imageUrl }) {
 
 // Delete item
 function deleteItems(id) {
-  return fetch(`${baseUrl}/items/${id}`, {
+  return fetch(`${BASE_URL}/items/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders(false),
   })
@@ -79,7 +79,7 @@ function updateUserInfo({ name, avatar }) {
     );
   }
 
-  return fetch(`${baseUrl}/users/me`, {
+  return fetch(`${BASE_URL}/users/me`, {
     method: 'PATCH',
     headers: getAuthHeaders(),
     body: JSON.stringify({ name, avatar }),
@@ -105,7 +105,6 @@ function removeCardLike(itemId) {
 }
 
 export {
-  baseUrl,
   login,
   getItems,
   addItems,

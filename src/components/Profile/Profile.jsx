@@ -12,19 +12,40 @@ function Profile({
   handleCardClick,
   handleAddClick,
   handleDeleteClick,
+  handleLogOut,
 }) {
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
   const [isEditOpen, setIsEditOpen] = useState(false); // Modal open/close state
 
   // Handles user info update from modal
   const handleUpdateUser = async (userData) => {
+    // Only include fields that are actually provided
+    const validData = {};
+    if (userData.name?.trim()) validData.name = userData.name.trim();
+    if (userData.avatar?.trim()) validData.avatar = userData.avatar.trim();
+
+    // Prevent update if no valid fields
+    if (!validData.name && !validData.avatar) {
+      console.error('No valid user data provided for update.');
+      return;
+    }
+
     try {
-      const updatedUser = await updateUserInfo(userData);
+      const updatedUser = await updateUserInfo(validData);
       setCurrentUser(updatedUser);
       setIsEditOpen(false); // Close modal after update
     } catch (err) {
       console.error('Failed to update user:', err);
     }
+  };
+
+  // Logout function
+  const handleLogout = () => {
+    // Clear user context
+    setCurrentUser(null);
+
+    // Redirect to the login page or homepage (depending on your app's structure)
+    navigate('/login'); // Adjust route as needed
   };
 
   return (
@@ -35,7 +56,12 @@ function Profile({
           className='profile__edit-btn'
           onClick={() => setIsEditOpen(true)}
         >
-          Edit Profile
+          Change profile data
+        </button>
+
+        {/* Logout button */}
+        <button className='profile__logout-btn' onClick={handleLogOut}>
+          Log out
         </button>
       </section>
 

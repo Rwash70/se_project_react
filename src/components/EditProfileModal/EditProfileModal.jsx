@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import './EditProfileModal.css';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
-import { updateUserInfo } from '../../utils/api';
 
 function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
   const { currentUser } = useContext(CurrentUserContext);
@@ -22,8 +21,11 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
     setIsLoading(true);
     setError(null);
 
-    // Ensure that either name or avatar is provided
-    if (!name && !avatar) {
+    const updateData = {};
+    if (name.trim()) updateData.name = name.trim();
+    if (avatar.trim()) updateData.avatar = avatar.trim();
+
+    if (!updateData.name && !updateData.avatar) {
       setError(
         'You must provide at least one field (name or avatar) to update'
       );
@@ -32,9 +34,8 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
     }
 
     try {
-      const updatedUser = await updateUserInfo({ name, avatar });
-      onUpdateUser(updatedUser); // Update user context or parent state
-      onClose(); // Close the modal after successful update
+      await onUpdateUser(updateData); // Parent handles API call + context update
+      onClose(); // Close modal after success
     } catch (err) {
       setError('Failed to update profile');
     } finally {
@@ -58,7 +59,7 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
               className='edit-profile-modal__input'
               value={name}
               onChange={(e) => setName(e.target.value)}
-              required
+              placeholder='Enter your name'
             />
           </label>
           <label className='edit-profile-modal__label'>
@@ -67,7 +68,7 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
               className='edit-profile-modal__input'
               value={avatar}
               onChange={(e) => setAvatar(e.target.value)}
-              required
+              placeholder='Enter avatar URL'
             />
           </label>
           {error && <p className='edit-profile-modal__error'>{error}</p>}

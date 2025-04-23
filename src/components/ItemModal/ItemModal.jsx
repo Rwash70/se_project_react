@@ -14,12 +14,16 @@ function ItemModal({ activeModal, onClose, card, onDelete, onToggleModal }) {
 
   // Step 4: Confirm deletion and trigger the delete logic
   const handleConfirmDelete = () => {
-    if (card && card._id !== undefined && card._id !== null) {
-      onDelete(card._id); // Call the onDelete function passed down as a prop
-      setIsDeleteModalOpen(false); // Close the delete confirmation modal
-      onClose(); // Optionally close the ItemModal after deleting
+    if (typeof onDelete === 'function') {
+      if (card && card._id !== undefined && card._id !== null) {
+        onDelete(card._id); // Call the onDelete function passed down as a prop
+        setIsDeleteModalOpen(false); // Close the delete confirmation modal
+        onClose(); // Optionally close the ItemModal after deleting
+      } else {
+        console.error('Error: Card ID is missing or invalid', card);
+      }
     } else {
-      console.error('Error: Card ID is missing or invalid', card);
+      console.error('Error: onDelete prop is not a function');
     }
   };
 

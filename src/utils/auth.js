@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3001'; // Replace with actual API URL
+export const BASE_URL = 'http://localhost:3001'; // Replace with actual API URL
 
 export const register = ({ name, avatar, email, password }) => {
   return fetch(`${BASE_URL}/signup`, {

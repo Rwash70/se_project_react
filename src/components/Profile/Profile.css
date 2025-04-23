@@ -6,3 +6,34 @@
 .profile__sidbar {
   display: flex;
 }
+
+.profile__edit-btn {
+  display: flex;
+  background: none;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: Cabinet Grotesk;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.profile__edit-btn:hover {
+  background-color: transparent;
+  transform: scale(1.05);
+}
+
+.profile__logout-btn {
+  margin-top: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: Cabinet Grotesk;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.profile__logout-btn:hover {
+  background-color: transparent;
+  transform: scale(1.05);
+}
