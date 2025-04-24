@@ -34,6 +34,7 @@ function ClothesSection({
               item={item}
               onDeleteItem={() => handleDeleteClick(item._id)}
               handleCardClick={handleCardClick}
+              currentUser={currentUser} // Pass currentUser as a prop
             />
           ))
         ) : (

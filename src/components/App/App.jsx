@@ -29,9 +29,8 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 
 function App() {
-  const navigate = useNavigate(); // You can now use this to navigate programmatically
+  const navigate = useNavigate();
 
-  // State declarations
   const [weatherData, setWeatherData] = useState({
     type: '',
     city: '',
@@ -63,6 +62,7 @@ function App() {
     setIsLoginModalOpen(true);
     setActiveModal('login');
   };
+
   const handleRegisterClick = () => {
     setIsRegisterModalOpen(true);
     setActiveModal('register');
@@ -123,7 +123,7 @@ function App() {
       setClothingItems(items);
 
       closeActiveModal();
-      navigate('/'); // Add this line to redirect to the homepage
+      navigate('/');
     } catch (err) {
       console.error('Login error:', err.message || err);
       throw err;
@@ -196,12 +196,8 @@ function App() {
     }
   };
 
-  // Handle delete card (modal action)
   const handleDeleteCard = (cardId) => {
-    console.log('Delete card with ID:', cardId);
-    // Call handleDeleteItem to delete the card from the backend
     handleDeleteItem(cardId);
-    // Close the modal after deletion
     closeActiveModal();
   };
 
@@ -221,7 +217,7 @@ function App() {
               handleLoginClick={handleLoginClick}
               handleRegisterClick={handleRegisterClick}
               handleAddClick={handleAddClick}
-              currentTemperatureUnit={currentTemperatureUnit} // Pass currentTemperatureUnit to Header
+              currentTemperatureUnit={currentTemperatureUnit}
             />
 
             <Routes>

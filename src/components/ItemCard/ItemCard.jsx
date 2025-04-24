@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './ItemCard.css';
 import { deleteItems, addCardLike, removeCardLike } from '../../utils/api';
 
-function ItemCard({ item, onDelete, handleCardClick }) {
-  const currentUserId = 'currentUserId'; // Replace this with actual logic to get the user ID, e.g., from context
+function ItemCard({ item, onDelete, handleCardClick, currentUser }) {
+  const currentUserId = currentUser?._id;
 
   // Ensure item is properly passed and has likes property
   if (!item || !Array.isArray(item.likes)) {
@@ -11,24 +11,19 @@ function ItemCard({ item, onDelete, handleCardClick }) {
     return null; // Or return a loading/error UI component
   }
 
-  // Handle like toggle action using API helpers
-  const handleLikeClick = async (itemId) => {
-    if (!item || !item.likes) {
-      console.error('Item or likes property is undefined');
-      return;
-    }
+  // 👇 Local state for likes
+  const [likes, setLikes] = useState(item.likes);
 
-    const hasLiked = item.likes.includes(currentUserId);
+  const handleLikeClick = async (itemId) => {
+    const hasLiked = likes.includes(currentUserId);
 
     try {
       if (hasLiked) {
-        // Call removeCardLike to unlike the item
         await removeCardLike(itemId);
-        item.likes = item.likes.filter((id) => id !== currentUserId); // Update local UI state
+        setLikes((prevLikes) => prevLikes.filter((id) => id !== currentUserId));
       } else {
-        // Call addCardLike to like the item
         await addCardLike(itemId);
-        item.likes.push(currentUserId); // Update local UI state
+        setLikes((prevLikes) => [...prevLikes, currentUserId]);
       }
     } catch (error) {
       console.error('Error liking the item:', error);
@@ -43,8 +38,7 @@ function ItemCard({ item, onDelete, handleCardClick }) {
         throw new Error('Authentication token is missing');
       }
 
-      // Call the deleteItems function to delete the item
-      await deleteItems(itemId); // No need to check response.ok, it's handled in api.js
+      await deleteItems(itemId);
       onDelete(itemId);
     } catch (error) {
       console.error('Error deleting item:', error);
@@ -57,9 +51,9 @@ function ItemCard({ item, onDelete, handleCardClick }) {
         <h2 className='card__name'>{item.name}</h2>
         <button
           className={`card__like-button ${
-            item.likes.includes(currentUserId) ? 'liked' : ''
+            likes.includes(currentUserId) ? 'liked' : ''
           }`}
-          onClick={() => handleLikeClick(item._id)} // On Like/Unlike button click
+          onClick={() => handleLikeClick(item._id)}
         ></button>
       </div>
       <img

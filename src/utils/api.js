@@ -88,7 +88,7 @@ function updateUserInfo({ name, avatar }) {
 
 // Like item
 function addCardLike(itemId) {
-  return fetch(`${baseUrl}/items/${itemId}/like`, {
+  return fetch(`${BASE_URL}/items/${itemId}/likes`, {
     method: 'PATCH',
     headers: getAuthHeaders(),
   }).then(checkResponse);
@@ -96,7 +96,7 @@ function addCardLike(itemId) {
 
 // Unlike item
 function removeCardLike(itemId) {
-  return fetch(`${baseUrl}/items/${itemId}/like`, {
+  return fetch(`${BASE_URL}/items/${itemId}/likes`, {
     method: 'DELETE',
     headers: getAuthHeaders(false),
   })
