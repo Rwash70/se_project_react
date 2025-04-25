@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './ItemCard.css';
 import { deleteItems, addCardLike, removeCardLike } from '../../utils/api';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
-function ItemCard({ item, onDelete, handleCardClick, currentUser }) {
-  const currentUserId = currentUser?._id;
+function ItemCard({ item, onDelete, handleCardClick }) {
+  const currentUser = useContext(CurrentUserContext);
+  const currentUserId = currentUser?.currentUser.id;
 
+  console.log(currentUserId);
+  console.log(currentUser);
   // Ensure item is properly passed and has likes property
   if (!item || !Array.isArray(item.likes)) {
     console.error('Item or likes array is missing');

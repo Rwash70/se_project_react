@@ -18,9 +18,16 @@ export default function RegisterModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (isFormFilled) {
-      onRegister({ name, avatar, email, password });
-      resetForm();
+      onRegister({ name, avatar, email, password })
+        .then(() => {
+          resetForm(); // Only reset after successful registration
+        })
+        .catch((err) => {
+          console.error('Registration failed:', err);
+          // Optionally show an error message to the user
+        });
     }
   };
 

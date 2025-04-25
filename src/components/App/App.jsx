@@ -100,6 +100,23 @@ function App() {
     }
   }, []);
 
+  // Escape key listener to close active modals
+  useEffect(() => {
+    if (!activeModal) return;
+
+    const handleEscClose = (e) => {
+      if (e.key === 'Escape') {
+        closeActiveModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscClose);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscClose);
+    };
+  }, [activeModal]);
+
   const handleSignOut = () => {
     localStorage.removeItem('jwt');
     setIsLoggedIn(false);
@@ -148,48 +165,34 @@ function App() {
 
   const handleLikeClick = async (itemId) => {
     try {
-      const updatedLikesState = !item.likes.includes(currentUser._id)
-        ? [...item.likes, currentUser._id]
-        : item.likes.filter((id) => id !== currentUser._id);
+      const item = clothingItems.find((item) => item._id === itemId);
+      if (!item) return; // If item not found, return early
 
-      const response = await fetch(`/api/items/${itemId}/like`, {
-        method: 'PATCH',
-        body: JSON.stringify({ likes: updatedLikesState }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        },
-      });
+      const isLiked = item.likes.includes(currentUser._id);
 
-      if (!response.ok) {
-        throw new Error('Failed to update like status');
+      // Use the appropriate API function depending on whether it's liked or not
+      if (isLiked) {
+        // If already liked, call removeCardLike
+        await removeCardLike(itemId);
+      } else {
+        // If not liked, call addCardLike
+        await addCardLike(itemId);
       }
 
+      // After like/dislike action, update the clothing items list
       const updatedItems = await getItems(localStorage.getItem('jwt'));
       setClothingItems(updatedItems);
     } catch (error) {
-      console.error('Error liking the item:', error);
+      console.error('Error liking/disliking the item:', error);
     }
   };
 
   const handleDeleteItem = async (itemId) => {
     try {
-      const response = await fetch(`${BASE_URL}/items/${itemId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        },
-      });
+      // Reusing the deleteItems function from api.js
+      const updatedItems = await deleteItems(itemId);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          `Failed to delete item: ${errorData.message || 'Unknown error'}`
-        );
-      }
-
-      const updatedItems = await getItems(localStorage.getItem('jwt'));
+      // After deletion, update the clothingItems state with the new list
       setClothingItems(updatedItems);
     } catch (error) {
       console.error('Error deleting item:', error);

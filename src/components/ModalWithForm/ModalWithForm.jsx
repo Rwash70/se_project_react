@@ -9,18 +9,14 @@ const ModalWithForm = ({
   activeModal,
   onClose,
   onSubmit,
-  resetForm, // Pass resetForm as a prop to reset form on modal open
+  resetForm, // Optional reset logic
   hideSubmitButton,
+  isLoading = false,
+  error = null,
+  buttonText = name, // Default to `name` if buttonText not passed
 }) => {
-  // // Reset the form when modal is opened
-  // useEffect(() => {
-  //   if (isOpen && resetForm) {
-  //     resetForm(); // Call reset function passed as prop
-  //   }
-  // }, [isOpen, resetForm]);
-
   return (
-    <div className={`modal ${isOpen && 'modal_opened'}`}>
+    <div className={`modal ${isOpen ? 'modal_opened' : ''}`}>
       <div className='modal__content'>
         <h2 className='modal__title'>{title}</h2>
         <button
@@ -30,9 +26,14 @@ const ModalWithForm = ({
         ></button>
         <form onSubmit={onSubmit} className='modal__form' name={name}>
           {children}
+          {error && <p className='modal__error'>{error}</p>}
           {!hideSubmitButton && (
-            <button type='submit' className='modal__submit'>
-              {name}
+            <button
+              type='submit'
+              className='modal__submit'
+              disabled={isLoading}
+            >
+              {isLoading ? 'Updating...' : buttonText}
             </button>
           )}
         </form>

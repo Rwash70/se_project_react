@@ -61,14 +61,22 @@ function addItems({ name, weather, imageUrl }) {
   }).then(checkResponse);
 }
 
-// Delete item
-function deleteItems(id) {
-  return fetch(`${BASE_URL}/items/${id}`, {
+// ✅ Updated Delete item
+async function deleteItems(itemId) {
+  const response = await fetch(`${BASE_URL}/items/${itemId}`, {
     method: 'DELETE',
     headers: getAuthHeaders(false),
-  })
-    .then(checkResponse)
-    .then(() => id);
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      `Failed to delete item: ${errorData.message || 'Unknown error'}`
+    );
+  }
+
+  const updatedItems = await getItems();
+  return updatedItems;
 }
 
 // Update user info

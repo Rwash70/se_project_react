@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import './EditProfileModal.css';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import ModalWithForm from '../ModalWithForm/ModalWithForm';
 
 function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
   const { currentUser } = useContext(CurrentUserContext);
@@ -34,8 +35,8 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
     }
 
     try {
-      await onUpdateUser(updateData); // Parent handles API call + context update
-      onClose(); // Close modal after success
+      await onUpdateUser(updateData);
+      onClose();
     } catch (err) {
       setError('Failed to update profile');
     } finally {
@@ -43,45 +44,36 @@ function EditProfileModal({ isOpen, onClose, onUpdateUser }) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className='edit-profile-modal'>
-      <div className='edit-profile-modal__content'>
-        <button className='edit-profile-modal__close' onClick={onClose}>
-          ×
-        </button>
-        <h2 className='edit-profile-modal__title'>Edit Profile</h2>
-        <form className='edit-profile-modal__form' onSubmit={handleSubmit}>
-          <label className='edit-profile-modal__label'>
-            Name:
-            <input
-              className='edit-profile-modal__input'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder='Enter your name'
-            />
-          </label>
-          <label className='edit-profile-modal__label'>
-            Avatar URL:
-            <input
-              className='edit-profile-modal__input'
-              value={avatar}
-              onChange={(e) => setAvatar(e.target.value)}
-              placeholder='Enter avatar URL'
-            />
-          </label>
-          {error && <p className='edit-profile-modal__error'>{error}</p>}
-          <button
-            className='edit-profile-modal__submit'
-            type='submit'
-            disabled={isLoading}
-          >
-            {isLoading ? 'Updating...' : 'Save changes'}
-          </button>
-        </form>
-      </div>
-    </div>
+    <ModalWithForm
+      name='edit-profile'
+      title='Edit Profile'
+      isOpen={isOpen}
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      isLoading={isLoading}
+      error={error}
+      buttonText='Save changes'
+    >
+      <label className='edit-profile-modal__label'>
+        Name:
+        <input
+          className='edit-profile-modal__input'
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder='Enter your name'
+        />
+      </label>
+      <label className='edit-profile-modal__label'>
+        Avatar URL:
+        <input
+          className='edit-profile-modal__input'
+          value={avatar}
+          onChange={(e) => setAvatar(e.target.value)}
+          placeholder='Enter avatar URL'
+        />
+      </label>
+    </ModalWithForm>
   );
 }
 
