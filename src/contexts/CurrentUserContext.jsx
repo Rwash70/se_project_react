@@ -7,17 +7,3 @@ export const CurrentUserContext = createContext();
 export const useCurrentUser = () => {
   return useContext(CurrentUserContext);
 };
-
-// Context provider component
-// export const CurrentUserProvider = ({ children }) => {
-//   const [currentUser, setCurrentUser] = useState(null);
-//   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-//   return (
-//     <CurrentUserContext.Provider
-//       value={{ currentUser, setCurrentUser, isLoggedIn, setIsLoggedIn }}
-//     >
-//       {children}
-//     </CurrentUserContext.Provider>
-//   );
-// };

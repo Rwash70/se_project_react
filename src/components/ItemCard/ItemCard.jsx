@@ -7,15 +7,13 @@ function ItemCard({ item, onDelete, handleCardClick }) {
   const currentUser = useContext(CurrentUserContext);
   const currentUserId = currentUser?.currentUser.id;
 
-  console.log(currentUserId);
-  console.log(currentUser);
   // Ensure item is properly passed and has likes property
   if (!item || !Array.isArray(item.likes)) {
     console.error('Item or likes array is missing');
     return null; // Or return a loading/error UI component
   }
 
-  // 👇 Local state for likes
+  // Local state for likes
   const [likes, setLikes] = useState(item.likes);
 
   const handleLikeClick = async (itemId) => {
