@@ -1,6 +1,9 @@
 import { checkResponse } from './api'; // Import shared response handler
 
-export const BASE_URL = 'http://localhost:3001'; // Replace with actual API URL
+export const BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://api.solunaverse.com' // Production backend URL
+    : 'http://localhost:3001'; // Local development backend URL
 
 export const register = ({ name, avatar, email, password }) => {
   return fetch(`${BASE_URL}/signup`, {

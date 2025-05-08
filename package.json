@@ -1,5 +1,6 @@
 {
   "name": "se_project_react",
+  "homepage": "https://solunaverse.com",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +8,8 @@
     "dev": "vite --open",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && scp -r ./dist/* rwashingtony@34.30.163.54:/home/rwashingtony/frontend"
   },
   "dependencies": {
     "normalize.css": "^8.0.1",

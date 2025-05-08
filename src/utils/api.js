@@ -61,7 +61,7 @@ function addItems({ name, weather, imageUrl }) {
   }).then(checkResponse);
 }
 
-// ✅ Updated Delete item
+// Updated Delete item
 async function deleteItems(itemId) {
   const response = await fetch(`${BASE_URL}/items/${itemId}`, {
     method: 'DELETE',
