@@ -1,4 +1,4 @@
-# WTWR (What to Wear?): Back End
+# WTWR (What to Wear?):
 
 This back-end project focuses on creating a server for the WTWR (What To Wear Right) application. The goal is to build a robust API that supports user authentication, interaction with a database, and secure handling of requests. This project helps in gaining a deeper understanding of:
 
